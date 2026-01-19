@@ -1,488 +1,953 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Online Medication & Prescription Tracker</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Medication & Prescription Tracker</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            color: #00ff99;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
 
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        background: black;
-        color: #00ff99;
-        font-family: Arial, sans-serif;
-        text-align: center;
-    }
+        #splash {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
 
-    #splash {
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 32px;
-        font-weight: bold;
-    }
+        .container {
+            width: 500px;
+            margin: 40px auto;
+            padding: 25px;
+            border: 2px solid #00ff99;
+            border-radius: 10px;
+            display: none;
+        }
 
-    .container {
-        width: 500px;
-        margin: 40px auto;
-        padding: 25px;
-        border: 2px solid #00ff99;
-        border-radius: 10px;
-        display: none;
-    }
+        input, select {
+            width: 95%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #2e5a47;
+            background: #1b2b26;
+            color: #d2e8dd;
+            border-radius: 5px;
+        }
 
-    input, select {
-        width: 95%;
-        padding: 12px;
-        margin: 10px 0;
-        border: 1px solid #2e5a47;
-        background: #1b2b26;
-        color: #d2e8dd;
-        border-radius: 5px;
-    }
+        button {
+            width: 97%;
+            padding: 12px;
+            background: #00ff99;
+            color: black;
+            border: none;
+            margin-top: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
 
-    button {
-        width: 97%;
-        padding: 12px;
-        background: #00ff99;
-        color: black;
-        border: none;
-        margin-top: 10px;
-        font-size: 16px;
-        cursor: pointer;
-        border-radius: 5px;
-    }
+        .hidden {
+            display: none;
+        }
 
-    .hidden { display: none; }
-    a { color: #00ff99; cursor: pointer; margin-top: 10px; display: block; }
+        a {
+            color: #00ff99;
+            cursor: pointer;
+            display: block;
+            margin-top: 10px;
+        }
 
-    .menu-option {
-        background: #0c1a16;
-        color: #b5c8bf;
-        padding: 20px;
-        margin: 12px 20px;
-        border-radius: 12px;
-        font-size: 20px;
-        border: 1px solid #2e5a47;
-        cursor: pointer;
-    }
+        .menu-option {
+            background: #0c1a16;
+            padding: 20px;
+            margin: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid #2e5a47;
+            cursor: pointer;
+        }
 
-    #bottomNav {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #111;
-        border-top: 2px solid #00ff99;
-        padding: 10px 0;
-        display: none;
-        justify-content: space-around;
-    }
+        .page {
+            display: none;
+            padding-bottom: 100px;
+        }
 
-    #bottomNav button {
-        background: transparent;
-        border: none;
-        color: #00ff99;
-        font-size: 16px;
-    }
+        .card {
+            background: #0c1a16;
+            border: 1px solid #2e5a47;
+            padding: 15px;
+            margin: 12px 20px;
+            border-radius: 12px;
+            text-align: left;
+        }
 
-    .page {
-        display: none;
-        padding-bottom: 100px;
-    }
+        #bottomNav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #111;
+            border-top: 2px solid #00ff99;
+            padding: 10px 0;
+            display: none;
+            justify-content: space-around;
+        }
 
-    .pres-item {
-        background: #0c1a16;
-        border: 1px solid #2e5a47;
-        padding: 15px;
-        margin: 12px 20px;
-        border-radius: 12px;
-        font-size: 16px;
-        text-align: left;
-    }
-
-    .card {
-        background: #0c1a16;
-        border: 1px solid #2e5a47;
-        padding: 15px;
-        margin: 12px;
-        border-radius: 10px;
-        text-align: left;
-    }
-
-    .title {
-        font-size: 22px; 
-        margin-top: 20px;
-    }
-</style>
+        #bottomNav button {
+            background: none;
+            border: none;
+            color: #00ff99;
+        }
+    </style>
 </head>
 
 <body>
 
-<div id="splash">Online Medication & Prescription Tracker</div>
+   
+    <div id="splash">Online Medication & Prescription Tracker</div>
 
-<div class="container" id="loginBox">
-    <h1>Login</h1>
-    <input type="text" id="loginName" placeholder="Full Name">
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPassword" placeholder="Password">
 
-    <select id="loginRole" onchange="showRoleFields()">
-        <option value="none">Select Role</option>
-        <option value="admin">Admin</option>
-        <option value="patient">Patient</option>
-        <option value="doctor">Doctor</option>
-        <option value="pharmacist">Pharmacist</option>
-    </select>
+    <div class="container" id="loginBox">
+        <h1>Login</h1>
+        <input id="loginName" placeholder="Full Name">
+        <input id="loginEmail" placeholder="Email">
+        <input id="loginPassword" placeholder="Password">
+        <select id="loginRole" onchange="showRoleFields()">
+            <option value="none">Select Role</option>
+            <option value="admin">Admin</option>
+            <option value="patient">Patient</option>
+            <option value="doctor">Doctor</option>
+            <option value="pharmacist">Pharmacist</option>
+        </select>
+        <input id="patientLogin" class="hidden" placeholder="Patient ID">
+        <input id="doctorLogin1" class="hidden" placeholder="License Number">
+        <input id="doctorLogin2" class="hidden" placeholder="Specialization">
+        <input id="pharmaLogin" class="hidden" placeholder="Pharmacist License">
+        <button onclick="loginUser()">Login</button>
+        <a onclick="openSignup()">Don't have an account? Create one</a>
+    </div>
 
-    <input type="text" id="patientLogin" class="hidden" placeholder="Enter Patient ID">
-    <input type="text" id="doctorLogin1" class="hidden" placeholder="Enter License Number">
-    <input type="text" id="doctorLogin2" class="hidden" placeholder="Enter Specialization">
-    <input type="text" id="pharmaLogin" class="hidden" placeholder="Pharmacist License Number">
 
-    <button onclick="loginUser()">Login</button>
-    <a onclick="openSignup()">Don't have an account? Create one</a>
-</div>
+    <div class="container" id="signupBox">
+        <h1>Sign Up</h1>
+        <input id="signupName" placeholder="Full Name">
+        <input id="signupEmail" placeholder="Email">
+        <input id="signupPassword" placeholder="Password">
+        <select id="signupRole" onchange="showSignupFields()">
+            <option value="none">Select Role</option>
+            <option value="admin">Admin</option>
+            <option value="patient">Patient</option>
+            <option value="doctor">Doctor</option>
+            <option value="pharmacist">Pharmacist</option>
+        </select>
+        <input id="patientSignup1" class="hidden" placeholder="Health Issue Domain">
+        <input id="doctorSignup1" class="hidden" placeholder="License Number">
+        <input id="doctorSignup2" class="hidden" placeholder="Specialization">
+        <input id="pharmaSignup" class="hidden" placeholder="Pharmacist License">
+        <input id="adminSignup" class="hidden" placeholder="Admin Code">
+        <button onclick="signupUser()">Sign Up</button>
+        <a onclick="openLogin()">Already have an account? Login</a>
+    </div>
 
-<div class="container" id="signupBox">
-    <h1>Sign Up</h1>
-    <input type="text" id="signupName" placeholder="Full Name">
-    <input type="email" id="signupEmail" placeholder="Email">
-    <input type="password" id="signupPassword" placeholder="Password">
+   
+    <div class="page" id="dashboardPage">
+        <h2>Dashboard</h2>
+        <div class="menu-option" onclick="showPage('doctorMenuPage')">Doctor</div>
+        <div class="menu-option" onclick="showPage('patientPage')">Patient</div>
+        <div class="menu-option" onclick="showPage('pharmacistPage')">Pharmacist</div>
+        <div class="menu-option" onclick="showPage('adminPage')">Admin</div>
+    </div>
 
-    <select id="signupRole" onchange="showSignupFields()">
-        <option value="none">Select Role</option>
-        <option value="admin">Admin</option>
-        <option value="patient">Patient</option>
-        <option value="doctor">Doctor</option>
-        <option value="pharmacist">Pharmacist</option>
-    </select>
+ 
+    <div class="page" id="doctorMenuPage">
+        <h2>Doctor</h2>
+        <div class="menu-option" onclick="showPage('doctorAddPage')">Add Prescription</div>
+        <div class="menu-option" onclick="showDoctorView()">View / Edit Prescriptions</div>
+    </div>
 
-    <input type="text" id="patientSignup1" class="hidden" placeholder="Health Issue Domain">
-    <input type="text" id="patientSignup2" class="hidden" placeholder="Auto-generated Patient ID">
-    <input type="text" id="doctorSignup1" class="hidden" placeholder="License Number">
-    <input type="text" id="doctorSignup2" class="hidden" placeholder="Specialization">
-    <input type="text" id="pharmaSignup" class="hidden" placeholder="Pharmacist License Details">
-    <input type="text" id="adminSignup" class="hidden" placeholder="Admin Code">
+    <div class="page" id="doctorAddPage">
+        <h2>Add Prescription</h2>
+        <input id="docPatientId" placeholder="Patient ID">
+        <button onclick="addMedicationCard()">+ Add Medication</button>
+        <div id="medList"></div>
+        <button onclick="savePrescription()">Save Prescription</button>
+    </div>
 
-    <button onclick="signupUser()">Sign Up</button>
-    <a onclick="openLogin()">Already have an account? Login</a>
-</div>
+    <div class="page" id="doctorViewPage">
+        <h2>All Prescriptions</h2>
+        <div id="doctorPresList"></div>
+    </div>
 
-<div class="page" id="dashboardPage">
-    <h2 style="margin-top:20px;">Dashboard</h2>
 
-    <div class="menu-option" onclick="showPage('doctorPage')">Doctor</div>
-    <div class="menu-option" onclick="showPage('patientPage')">Patient</div>
-    <div class="menu-option" onclick="showPage('pharmacistPage')">Pharmacist</div>
-    <div class="menu-option" onclick="showPage('adminPage')">Admin</div>
-</div>
+    <div class="page" id="patientPage">
+        <h2>Patient</h2>
+        <div class="menu-option" onclick="showPatientPrescriptions()">View Prescriptions</div>
+        <div class="menu-option" onclick="openPatientAlarm()">Set Alarm</div>
+    </div>
 
-<!-- ⭐ Updated Prescription Page (Auto-updating) -->
-<div class="page" id="prescriptionPage">
-    <h2 style="text-align:left;margin-left:20px;">Active Prescriptions</h2>
-    <div id="activePresList"></div>
+    <div class="page" id="prescriptionPage">
+        <h2>Prescriptions</h2>
+        <h3>Active Prescriptions</h3>
+        <div id="activePresList"></div>
+        <h3>Past Prescriptions</h3>
+        <div id="pastPresList"></div>
+    </div>
 
-    <h2 style="text-align:left;margin-left:20px;margin-top:30px;">Past Prescriptions</h2>
-    <div id="pastPresList"></div>
-</div>
+    <div class="page" id="remainderPage">
+        <h2>Medication Reminder</h2>
+        <select id="remPrescription">
+            <option value="">Select Prescription</option>
+        </select>
+        <select id="remFrequency">
+            <option value="">Select Frequency</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+        </select>
+        <input type="time" id="remTime">
+        <input type="number" id="remDays" placeholder="Number of days">
+        <button onclick="setReminderAlarm()">Set Reminder</button>
+        <div id="remStatus"></div>
+        <div id="remAlarmBox" class="hidden">
+            <p id="remAlarmMsg"></p>
+            <button onclick="markTaken()">Taken</button>
+            <button onclick="markNotTaken()">Not Taken</button>
+        </div>
+    </div>
 
-<div class="page" id="remainderPage">
-    <h2 style="margin-top:20px;">Medication Tracker</h2>
+ 
+    <div class="page" id="profilePage">
+        <h2>Profile</h2>
+        <button onclick="logout()">Logout</button>
+    </div>
 
-    <input type="text" placeholder="Medication Name">
-    <input type="text" placeholder="Dosage (e.g., 200mg)">
-    
-    <select>
-        <option>Frequency</option>
-        <option>Once a Day</option>
-        <option>Twice a Day</option>
-        <option>Weekly</option>
-    </select>
+    <div class="page" id="pharmacistPage">
+        <h2>Pharmacist</h2>
+        <div class="menu-option" onclick="showPage('updateStockPage')">Update Stock</div>
+        <div class="menu-option" onclick="showViewStock()">View Stock</div>
+        <div class="menu-option" onclick="showPharmaSale()">Process Sale</div>
+    </div>
 
-    <input type="time">
+    <div class="page" id="updateStockPage">
+        <h2><span onclick="showPage('pharmacistPage')" style="cursor:pointer;">⬅ Back</span> Update Medicine Stock</h2>
+        <input id="stockMedName" placeholder="Medicine Name">
+        <input id="stockDosage" placeholder="Dosage">
+        <input id="stockExpiry" type="date" min="">
+        <input id="stockQuantity" type="number" placeholder="Stock Quantity">
+        <button onclick="updateMedicine()">Add / Update Stock</button>
+    </div>
 
-    <select>
-        <option>Notification Type</option>
-        <option>Popup</option>
-        <option>Alarm</option>
-        <option>Vibration</option>
-    </select>
+    <div class="page" id="viewStockPage">
+        <h2><span onclick="showPage('pharmacistPage')" style="cursor:pointer;">⬅ Back</span> View Medicine Stock</h2>
+        <div id="stockList"></div>
+    </div>
 
-    <button>Save Medication</button>
-</div>
+    <div class="page" id="pharmaSalePage">
+        <h2><span onclick="showPage('pharmacistPage')" style="cursor:pointer;">⬅ Back</span> Process Prescription Sale</h2>
+        <div id="saleList"></div>
+    </div>
 
-<div class="page" id="profilePage">
-    <h2 style="margin-top:20px;">Profile</h2>
-    <button onclick="logout()">Logout</button>
-</div>
+ 
+    <div id="bottomNav">
+        <button onclick="showPage('dashboardPage')">Dashboard</button>
+        <button onclick="showPage('prescriptionPage')">Prescriptions</button>
+        <button onclick="showPage('remainderPage')">Reminders</button>
+        <button onclick="showPage('profilePage')">Profile</button>
+    </div>
 
-<div class="page" id="doctorPage">
-    <h2 class="title">Doctor – Add Prescription</h2>
+    <div class="page" id="adminPage">
+        <h2>Admin</h2>
+        <div class="menu-option" onclick="showDoctorActivities()">View Doctor Activities</div>
+        <div class="menu-option" onclick="showPatientActivities()">View Patient Activities</div>
+        <div class="menu-option" onclick="showPharmacistActivities()">View Pharmacist Activities</div>
+        <div id="adminActivityView"></div>
+    </div>
 
-    <input type="text" id="docPatientId" placeholder="Enter Patient ID">
+    <script>
+   
 
-    <button onclick="addMedicationCard()">+ Add Medication</button>
+let prescriptions = [];
+let pastPrescriptions = [];
+let editIndex = null;
+let doctorActivities = [];
+let patientActivities = [];
+let pharmacistActivities = [];
+let currentReminder = null;
+let pendingPharmacy = [];
+let medicineStock = [];
+let currentUser = { name: "", email: "", password: "", role: "", id: "" };
 
-    <div id="medList"></div>
-
-    <button onclick="savePrescription()">Save Prescription</button>
-</div>
-
-<div class="page" id="patientPage">
-    <h2 class="title">Patient – Your Prescriptions</h2>
-    <div id="patientPrescriptionList"></div>
-</div>
-
-<div class="page" id="pharmacistPage">
-    <h2 class="title">Pharmacist – Stock Management</h2>
-
-    <input type="text" id="stockName" placeholder="Medicine Name">
-    <input type="number" id="stockQty" placeholder="Quantity">
-
-    <button onclick="addStock()">Add / Update Stock</button>
-
-    <h3>Current Stock:</h3>
-    <div id="stockList"></div>
-</div>
-
-<div class="page" id="adminPage">
-    <h2 class="title">Admin – Overview</h2>
-
-    <h3>All Prescriptions</h3>
-    <div id="adminPresList"></div>
-
-    <h3>Stock</h3>
-    <div id="adminStockList"></div>
-</div>
-
-<div id="bottomNav">
-    <button onclick="showPage('dashboardPage')">Dashboard</button>
-    <button onclick="showPage('prescriptionPage')">Prescriptions</button>
-    <button onclick="showPage('remainderPage')">Reminders</button>
-    <button onclick="showPage('profilePage')">Profile</button>
-</div>
-
-<script>
-setTimeout(() => {
-    document.getElementById("splash").style.display = "none";
-    document.getElementById("loginBox").style.display = "block";
-}, 3000);
-
-function openLogin() {
-    signupBox.style.display = "none";
-    loginBox.style.display = "block";
+function isExpired(expiryDate) {
+    let today = new Date().toISOString().split("T")[0];
+    return expiryDate <= today;
 }
+
+function loadReminderPrescriptions() {
+    remPrescription.innerHTML = `<option value="">Select Prescription</option>`;
+    prescriptions.forEach((p, index) => {
+        p.meds.forEach(m => {
+            let opt = document.createElement("option");
+            opt.value = index;
+            opt.text = `${m.name} | ${m.dose} | ${m.time}`;
+            remPrescription.appendChild(opt);
+        });
+    });
+}
+
+setTimeout(() => {
+    splash.style.display = "none";
+    loginBox.style.display = "block";
+}, 3000);
 
 function openSignup() {
     loginBox.style.display = "none";
     signupBox.style.display = "block";
 }
 
+function openLogin() {
+    signupBox.style.display = "none";
+    loginBox.style.display = "block";
+}
+
 function showRoleFields() {
-    let role = loginRole.value;
     patientLogin.classList.add("hidden");
     doctorLogin1.classList.add("hidden");
     doctorLogin2.classList.add("hidden");
     pharmaLogin.classList.add("hidden");
 
-    if(role === "patient") patientLogin.classList.remove("hidden");
-    if(role === "doctor") { doctorLogin1.classList.remove("hidden"); doctorLogin2.classList.remove("hidden"); }
-    if(role === "pharmacist") pharmaLogin.classList.remove("hidden");
+    if (loginRole.value === "patient") patientLogin.classList.remove("hidden");
+    if (loginRole.value === "doctor") {
+        doctorLogin1.classList.remove("hidden");
+        doctorLogin2.classList.remove("hidden");
+    }
+    if (loginRole.value === "pharmacist") pharmaLogin.classList.remove("hidden");
 }
 
 function showSignupFields() {
-    let role = signupRole.value;
-
     patientSignup1.classList.add("hidden");
-    patientSignup2.classList.add("hidden");
     doctorSignup1.classList.add("hidden");
     doctorSignup2.classList.add("hidden");
     pharmaSignup.classList.add("hidden");
     adminSignup.classList.add("hidden");
 
-    if(role === "patient") { patientSignup1.classList.remove("hidden"); patientSignup2.classList.remove("hidden"); }
-    if(role === "doctor") { doctorSignup1.classList.remove("hidden"); doctorSignup2.classList.remove("hidden"); }
-    if(role === "pharmacist") pharmaSignup.classList.remove("hidden");
-    if(role === "admin") adminSignup.classList.remove("hidden");
+    if (signupRole.value === "patient") patientSignup1.classList.remove("hidden");
+    if (signupRole.value === "doctor") {
+        doctorSignup1.classList.remove("hidden");
+        doctorSignup2.classList.remove("hidden");
+    }
+    if (signupRole.value === "pharmacist") pharmaSignup.classList.remove("hidden");
+    if (signupRole.value === "admin") adminSignup.classList.remove("hidden");
 }
 
 function loginUser() {
+    let role = loginRole.value;
+    if (role === "none") { alert("Please select role"); return; }
+    currentUser.name = loginName.value;
+    currentUser.email = loginEmail.value;
+    currentUser.password = loginPassword.value;
+    currentUser.role = role;
+
+    if (role === "admin") {
+        currentUser.id = "";
+        alert("Admin login successful");
+    } else if (role === "patient") {
+        if (!patientLogin.value) { alert("Enter Patient ID"); return; }
+        currentUser.id = patientLogin.value;
+        alert("Patient login successful");
+    } else if (role === "doctor") {
+        if (!doctorLogin1.value) { alert("Enter License Number"); return; }
+        currentUser.id = doctorLogin1.value;
+        alert("Doctor login successful");
+    } else if (role === "pharmacist") {
+        if (!pharmaLogin.value) { alert("Enter Pharmacist License"); return; }
+        currentUser.id = pharmaLogin.value;
+        alert("Pharmacist login successful");
+    }
+
     loginBox.style.display = "none";
     bottomNav.style.display = "flex";
-    showPage('dashboardPage');
+}
+
+function getNextPatientId() {
+    let count = localStorage.getItem("patientCount");
+    count = count ? parseInt(count) + 1 : 1;
+    localStorage.setItem("patientCount", count);
+    return "PAT" + count;
 }
 
 function signupUser() {
-    alert("Signup Successful! Please Login.");
+    if (signupRole.value === "patient") {
+        let newPatientId = getNextPatientId();
+        alert("Signup Successful!\nYour Patient ID: " + newPatientId);
+    } else {
+        alert("Signup Successful!");
+    }
     openLogin();
 }
 
-let prescriptions = [];
-let stock = [];
+function showPage(id) {
+    document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+    document.getElementById(id).style.display = "block";
 
-/* ⭐ Doctor → Add medication card */
-function addMedicationCard() {
-    let div = document.createElement("div");
-    div.className = "card";
-
-    div.innerHTML = `
-        <input type="text" placeholder="Medicine Name" class="medName">
-        <input type="text" placeholder="Dosage (e.g., 200mg)" class="medDose">
-        <input type="text" placeholder="Duration (e.g., 5 days)" class="medDuration">
-        <input type="text" placeholder="Timing (e.g., Morning)" class="medTime">
-        <input type="text" placeholder="Notes (optional)" class="medNote">
-        <button style="width:120px;" onclick="this.parentElement.remove()">Remove</button>
-    `;
-
-    document.getElementById("medList").appendChild(div);
+    if (id === "remainderPage") loadReminderPrescriptions();
+    if (id === "viewStockPage") showStock();
+    if (id === "doctorAddPage") {
+        medList.innerHTML = "";
+        addMedicationCard();
+    }
 }
 
-/* ⭐ Doctor → Save prescription */
-function savePrescription() {
-    let pid = document.getElementById("docPatientId").value;
-    if(pid === "") return alert("Enter Patient ID");
+function addMedicationCard(data = {}) {
+    if (medicineStock.length === 0) {
+        alert(" No medicines available in pharmacy stock");
+        return;
+    }
 
-    let items = document.querySelectorAll("#medList .card");
-    if(items.length === 0) return alert("Add at least 1 medicine");
+    let d = document.createElement("div");
+    d.className = "card";
+
+    let options = medicineStock
+        .filter(m => m.qty > 0 && !isExpired(m.expiry))
+        .map(m => `<option value="${m.name}"> ${m.name} (${m.dosage}) </option>`)
+        .join("");
+
+    d.innerHTML = `
+        <select class="medName">
+            <option value="">Select Medicine</option>
+            ${options}
+        </select>
+        <input class="medDose" placeholder="Dosage" value="${data.dose || ''}">
+        <input class="medDuration" placeholder="Duration" value="${data.duration || ''}">
+        <input class="medTime" placeholder="Timing" value="${data.time || ''}">
+        <button onclick="this.parentElement.remove()">Remove</button>
+    `;
+    medList.appendChild(d);
+}
+
+// Save prescription (doctor)
+function savePrescription() {
+    if (!docPatientId.value) return alert("Patient ID is required");
 
     let meds = [];
-
-    items.forEach(card => {
+    document.querySelectorAll("#medList .card").forEach(c => {
         meds.push({
-            name: card.querySelector(".medName").value,
-            dose: card.querySelector(".medDose").value,
-            duration: card.querySelector(".medDuration").value,
-            time: card.querySelector(".medTime").value,
-            note: card.querySelector(".medNote").value
+            name: c.querySelector(".medName").value,
+            dose: c.querySelector(".medDose").value,
+            duration: parseInt(c.querySelector(".medDuration").value),
+            time: c.querySelector(".medTime").value
         });
     });
 
-    prescriptions.push({ pid, meds });
+    if (meds.length === 0) return alert("Add at least one medicine");
 
-    alert("Prescription saved!");
+    let data = { pid: docPatientId.value, meds };
 
-    document.getElementById("medList").innerHTML = "";
-    document.getElementById("docPatientId").value = "";
+    prescriptions.push(data);
 
-    loadPrescriptionTab(); // AUTO UPDATE
+    alert("Prescription Saved!");
+
+    medList.innerHTML = "";
+    docPatientId.value = "";
+
+    
+    if(currentUser.role === "patient") updatePrescriptionTabs(currentUser.id);
 }
 
-/* ⭐ Patient Page → Load prescriptions */
-function loadPatientPrescriptions() {
-    let div = document.getElementById("patientPrescriptionList");
-    div.innerHTML = "";
 
-    prescriptions.forEach(p => {
-        let card = document.createElement("div");
-        card.className = "card";
+function completePrescription(index) {
+    let p = prescriptions.splice(index, 1)[0];
+    pastPrescriptions.push(p);
+    updatePrescriptionTabs(currentUser.id);
+}
 
-        card.innerHTML = `<b>Patient ID: ${p.pid}</b><br><br>`;
 
+function updatePrescriptionTabs(patientId) {
+    activePresList.innerHTML = "";
+    pastPresList.innerHTML = "";
+
+    let active = prescriptions.filter(p => p.pid === patientId);
+    let past = pastPrescriptions.filter(p => p.pid === patientId);
+
+    active.forEach(p => {
+        let div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `<b>Patient:</b> ${p.pid}<br>` + 
+            p.meds.map(m => `${m.name} - ${m.dose} - ${m.duration} days - ${m.time}`).join("<br>") +
+            `<br><button onclick="completePrescription(${prescriptions.indexOf(p)})">Mark Complete</button>`;
+        activePresList.appendChild(div);
+    });
+
+    past.forEach(p => {
+        let div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `<b>Patient:</b> ${p.pid}<br>` + 
+            p.meds.map(m => `${m.name} - ${m.dose} - ${m.duration} days - ${m.time}`).join("<br>");
+        pastPresList.appendChild(div);
+    });
+}
+
+
+function showPatientPrescriptions() {
+    updatePrescriptionTabs(currentUser.id);
+    showPage("prescriptionPage");
+}
+
+
+function updatePrescriptionTabs(patientId = null) {
+    activePresList.innerHTML = "";
+    pastPresList.innerHTML = "";
+
+    let active, past;
+
+    if (patientId) {
+        active = prescriptions.filter(p => p.pid === patientId);
+        past = pastPrescriptions.filter(p => p.pid === patientId);
+    } else {
+        active = prescriptions;
+        past = pastPrescriptions;
+    }
+
+    active.forEach(p => {
+        let html = `<div class="card"><b>Patient:</b> ${p.pid}<br>`;
         p.meds.forEach(m => {
-            card.innerHTML += `
-                <div style='margin:5px 0;'>
-                    <b>${m.name}</b> – ${m.dose}<br>
-                    ${m.time}, ${m.duration} <br>
-                    <i>${m.note}</i>
-                </div><hr>`;
+            html += `${m.name} | ${m.dose} | ${m.duration} | ${m.time}<br>`;
         });
-
-        div.appendChild(card);
-    });
-}
-
-/* ⭐ Pharmacist → Add / update stock */
-function addStock() {
-    let name = stockName.value;
-    let qty = Number(stockQty.value);
-
-    let found = stock.find(s => s.name === name);
-
-    if(found) found.qty = qty;
-    else stock.push({ name, qty });
-
-    loadStock();
-}
-
-/* ⭐ Display stock */
-function loadStock() {
-    stockList.innerHTML = "";
-    stock.forEach(s => {
-        stockList.innerHTML += `
-            <div class="card">
-                <b>${s.name}</b> – ${s.qty}
-            </div>
-        `;
-    });
-}
-
-/* ⭐ Admin Page – show all */
-function loadAdminData() {
-
-    adminPresList.innerHTML = "";
-    prescriptions.forEach(p => {
-        adminPresList.innerHTML += `
-            <div class="card">
-                <b>Patient ID: ${p.pid}</b><br>
-                Medicines: ${p.meds.length}
-            </div>
-        `;
+        html += `</div>`;
+        activePresList.innerHTML += html;
     });
 
-    adminStockList.innerHTML = "";
-    stock.forEach(s => {
-        adminStockList.innerHTML += `
-            <div class="card">
-                <b>${s.name}</b> – ${s.qty}
-            </div>
-        `;
-    });
-}
-
-/* ⭐ NEW — Auto update Prescription Page */
-function loadPrescriptionTab() {
-    let activeDiv = document.getElementById("activePresList");
-    let pastDiv = document.getElementById("pastPresList");
-
-    activeDiv.innerHTML = "";
-    pastDiv.innerHTML = "";
-
-    prescriptions.forEach((p, index) => {
-        let card = document.createElement("div");
-        card.className = "pres-item";
-
-        card.innerHTML = `<b>Patient ID: ${p.pid}</b><br>`;
-
+    past.forEach(p => {
+        let html = `<div class="card"><b>Patient:</b> ${p.pid}<br>`;
         p.meds.forEach(m => {
-            card.innerHTML += `
-                <span style="color:#b5c8bf;">
-                    ${m.name} – ${m.dose} <br>
-                    ${m.time}, ${m.duration}
-                </span><br><br>`;
+            html += `${m.name} | ${m.dose} | ${m.duration} days | ${m.time}<br>`;
         });
-
-        if(index < 3) activeDiv.appendChild(card);
-        else pastDiv.appendChild(card);
+        html += `</div>`;
+        pastPresList.innerHTML += html;
     });
 }
 
-/* ⭐ updated showPage → auto load prescription tab */
-function showPage(pageId) {
-    document.querySelectorAll(".page").forEach(p => p.style.display = "none");
-    document.getElementById(pageId).style.display = "block";
 
-    if(pageId === "patientPage") loadPatientPrescriptions();
-    if(pageId === "adminPage") loadAdminData();
-    if(pageId === "prescriptionPage") loadPrescriptionTab();
+
+function showDoctorView() {
+    showPage("doctorViewPage");
+    doctorPresList.innerHTML = "";
+
+    prescriptions.forEach((p, i) => {
+        let html = `<div class="card"><b>Patient:</b> ${p.pid}<br><br>`;
+        p.meds.forEach(m => {
+            html += `${m.name} | ${m.dose} | ${m.duration} | ${m.time}<br>`;
+        });
+        html += `<br><button onclick="editPrescription(${i})">Edit</button></div>`;
+        doctorPresList.innerHTML += html;
+    });
+}
+
+function editPrescription(index) {
+    editIndex = index;
+    let p = prescriptions[index];
+    docPatientId.value = p.pid;
+    medList.innerHTML = "";
+    p.meds.forEach(m => addMedicationCard(m));
+    showPage("doctorAddPage");
+}
+
+function showPatientPrescriptions() {
+    activePresList.innerHTML = "";
+    pastPresList.innerHTML = "";
+
+    let pid = currentUser.id;
+    let active = prescriptions.filter(p => p.pid === pid);
+    let past = pastPrescriptions.filter(p => p.pid === pid);
+
+    active.forEach(p => {
+        let div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = p.meds.map(m => `${m.name} - ${m.dose} - ${m.duration} days`).join("<br>");
+        activePresList.appendChild(div);
+    });
+
+    past.forEach(p => {
+        let div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = p.meds.map(m => `${m.name} - ${m.dose}`).join("<br>");
+        pastPresList.appendChild(div);
+    });
+
+    showPage("prescriptionPage");
+}
+
+function openPatientAlarm() {
+    showPage("patientAlarmPage");
+    loadPatientAlarmMedicines();
+}
+
+function loadPatientAlarmMedicines() {
+    patientAlarmMed.innerHTML = `<option value="">Select Medicine</option>`;
+    prescriptions.forEach(p => {
+        p.meds.forEach(m => {
+            let opt = document.createElement("option");
+            opt.value = m.time;
+            opt.text = m.name + " (Prescribed: " + m.time + ")";
+            patientAlarmMed.appendChild(opt);
+        });
+    });
+}
+
+function setPatientAlarm() {
+    let prescribedTime = patientAlarmMed.value;
+    let customTime = patientAlarmTime.value;
+    let finalTime = customTime || prescribedTime;
+
+    if (!finalTime) {
+        alert("Please select medicine or time");
+        return;
+    }
+
+    let now = new Date();
+    let alarm = new Date();
+    let [h, m] = finalTime.split(":");
+    alarm.setHours(h, m, 0);
+
+    if (alarm < now) alarm.setDate(alarm.getDate() + 1);
+
+    alert("Alarm scheduled for:\n" + alarm.toLocaleString());
+    patientAlarmStatus.innerHTML = "Alarm set for " + finalTime;
+    patientActivities.push("Patient set alarm for " + finalTime);
+
+    setTimeout(() => {
+        alert("⏰ Time to take your medicine!");
+    }, alarm - now);
+}
+
+
+function setReminderAlarm() {
+    let presIndex = remPrescription.value;
+    let days = parseInt(remDays.value);
+
+    if (presIndex === "" || !days) {
+        alert("Please select prescription and days");
+        return;
+    }
+
+    currentReminder = {
+        pid: prescriptions[presIndex].pid,
+        days: days,
+        taken: 0,
+        presIndex: parseInt(presIndex),
+        medIndex: 0
+    };
+
+    let p = prescriptions[presIndex];
+    let med = p.meds[0];
+
+    remAlarmBox.classList.remove("hidden");
+    remAlarmMsg.innerHTML = `<b>Medicine:</b> ${med.name}<br> <b>Dosage:</b> ${med.dose}<br> <b>Progress:</b> 0 / ${days}`;
+    alert("Reminder started");
+}
+
+function markTaken() {
+    if (!currentReminder) return;
+    if (currentReminder.taken >= currentReminder.days) {
+        alert("Course already completed");
+        return;
+    }
+
+    currentReminder.taken++;
+    let p = prescriptions[currentReminder.presIndex];
+    let med = p.meds[currentReminder.medIndex];
+
+    remAlarmMsg.innerHTML = `<b>Medicine:</b> ${med.name}<br> <b>Dosage:</b> ${med.dose}<br> <b>Progress:</b> ${currentReminder.taken} / ${currentReminder.days}`;
+    patientActivities.push(`Taken ${med.name} (${currentReminder.taken}/${currentReminder.days})`);
+
+    if (currentReminder.taken === currentReminder.days) {
+        moveToPastPrescriptions();
+    }
+}
+
+function markNotTaken() {
+    alert("Medicine not taken today");
+}
+
+function moveToPastPrescriptions() {
+    let index = currentReminder.presIndex;
+    let completed = prescriptions.splice(index, 1)[0];
+    pastPrescriptions.push(completed);
+
+    alert("Prescription completed and moved to Past");
+    currentReminder = null;
+    remAlarmBox.classList.add("hidden");
+    remPrescription.value = "";
+    remFrequency.value = "";
+    remTime.value = "";
+    remDays.value = "";
+    remAlarmMsg.innerHTML = "";
+
+    updatePrescriptionTabs(currentUser.id); 
+    loadReminderPrescriptions();
+}
+
+
+function showDoctorActivities() {
+    adminActivityView.innerHTML = "<h3>Doctor Activities</h3>";
+    if (doctorActivities.length === 0) {
+        adminActivityView.innerHTML += "No activity yet";
+        return;
+    }
+    doctorActivities.forEach(a => {
+        adminActivityView.innerHTML += `<div class="card">${a}</div>`;
+    });
+}
+
+function showPatientActivities() {
+    adminActivityView.innerHTML = "<h3>Patient Activities</h3>";
+    if (patientActivities.length === 0) {
+        adminActivityView.innerHTML += "No activity yet";
+        return;
+    }
+    patientActivities.forEach(a => {
+        adminActivityView.innerHTML += `<div class="card">${a}</div>`;
+    });
+}
+
+function showPharmacistActivities() {
+    adminActivityView.innerHTML = "<h3>Pharmacist Activities</h3>";
+    if (pharmacistActivities.length === 0) {
+        adminActivityView.innerHTML += "No activity yet";
+        return;
+    }
+    pharmacistActivities.forEach(a => {
+        adminActivityView.innerHTML += `<div class="card">${a}</div>`;
+    });
 }
 
 function logout() {
     location.reload();
 }
+
+
+function addOrUpdateStock() {
+    let name = stockMedName.value.trim();
+    let dosage = stockDosage.value.trim();
+    let expiry = stockExpiry.value;
+    let qty = parseInt(stockQuantity.value);
+
+    if (!name || !dosage || !expiry || isNaN(qty) || qty <= 0) {
+        alert("Please fill all medicine details correctly");
+        return;
+    }
+
+    let today = new Date().toISOString().split("T")[0];
+    if (expiry <= today) {
+        alert("Cannot add expired medicine");
+        return;
+    }
+
+    let stockItem = medicineStock.find(m => m.name === name && m.dosage === dosage && m.expiry === expiry);
+
+    if (stockItem) {
+        stockItem.qty += qty;
+    } else {
+        medicineStock.push({ name, dosage, expiry, qty });
+    }
+
+    stockMedName.value = "";
+    stockDosage.value = "";
+    stockExpiry.value = "";
+    stockQuantity.value = "";
+
+    alert("Stock updated successfully");
+}
+
+function showStock() {
+    stockList.innerHTML = "";
+
+    if (medicineStock.length === 0) {
+        stockList.innerHTML = "No stock available";
+        return;
+    }
+
+    medicineStock.forEach(m => {
+        let expired = isExpired(m.expiry);
+        let warning = m.qty < 50 ? " LOW STOCK" : "";
+        let expText = expired ? " EXPIRED" : "";
+
+        stockList.innerHTML += `
+            <div class="card">
+                <b>${m.name}</b> (${m.dosage})<br>
+                Quantity: ${expired ? 0 : m.qty}<br>
+                Expiry: ${m.expiry} ${warning} ${expText}
+            </div>
+        `;
+    });
+}
+
+(function setMinExpiryDate() {
+    let today = new Date();
+    today.setDate(today.getDate() + 1);
+    let minDate = today.toISOString().split("T")[0];
+    document.getElementById("stockExpiry").setAttribute("min", minDate);
+})();
+
+function updateMedicine() {
+    let name = stockMedName.value.trim();
+    let dosage = stockDosage.value.trim();
+    let expiry = stockExpiry.value;
+    let qty = parseInt(stockQuantity.value);
+
+    if (!name || !dosage || !expiry || qty <= 0) {
+        alert("Enter all details");
+        return;
+    }
+
+    let med = medicineStock.find(m => m.name === name);
+    if (med) {
+        med.qty += qty;
+        med.dosage = dosage;
+        med.expiry = expiry;
+    } else {
+        medicineStock.push({ name, dosage, expiry, qty });
+    }
+
+    pharmacistActivities.push(`Updated ${name}, qty added: ${qty}`);
+    alert("Stock Updated");
+
+   
+    stockMedName.value = "";
+    stockDosage.value = "";
+    stockExpiry.value = "";
+    stockQuantity.value = "";
+}
+
+
+function showPharmaSale() {
+    let saleDiv = document.getElementById("saleList");
+    saleDiv.innerHTML = "";
+
+    if (pendingPharmacy.length === 0) {
+        saleDiv.innerHTML = "<p>No prescriptions pending sale</p>";
+        return;
+    }
+
+    pendingPharmacy.forEach((p, index) => {
+        let card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <b>Patient ID:</b> ${p.pid}<br>
+            <b>Medicines:</b><br>
+            ${p.meds.map(m => `${m.name} - ${m.dose} - ${m.duration} days`).join("<br>")}
+            <br><button onclick="sellPrescription(${index})">Sell</button>
+        `;
+        saleDiv.appendChild(card);
+    });
+
+    showPage("pharmaSalePage");
+}
+
+function sellPrescription(i) {
+    let pres = pendingPharmacy[i];
+
+    for (let m of pres.meds) {
+        let stockItem = medicineStock.find(s => s.name === m.name);
+        if (!stockItem || stockItem.qty < m.duration) {
+            alert(`Not enough stock for ${m.name}`);
+            return;
+        }
+    }
+
+    pres.meds.forEach(m => {
+        let stockItem = medicineStock.find(s => s.name === m.name);
+        stockItem.qty -= m.duration;
+        if (stockItem.qty < 50) {
+            alert(`⚠ LOW STOCK: ${m.name} remaining ${stockItem.qty}`);
+        }
+    });
+
+    pharmacistActivities.push(`Pharmacist sold prescription for Patient ID: ${pres.pid}`);
+    pendingPharmacy.splice(i, 1);
+
+    alert("Sale completed!");
+    showPharmaSale();
+}
+
+function showSalesList() {
+    saleList.innerHTML = "";
+
+    if (pendingPharmacy.length === 0) {
+        saleList.innerHTML = "<p>No pending prescriptions</p>";
+        return;
+    }
+
+    pendingPharmacy.forEach((p, index) => {
+        let div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+            <p><b>Patient ID:</b> ${p.pid}</p>
+            ${p.meds.map(m => `<p>${m.name} - ${m.duration} days</p>`).join("")}
+            <button onclick="processSale(${index})">Sell</button>
+        `;
+        saleList.appendChild(div);
+    });
+}
+
+function processSale(i) {
+    let pres = pendingPharmacy[i];
+
+    for (let med of pres.meds) {
+        let stockItem = medicineStock.find(s => s.name === med.name);
+        if (!stockItem || stockItem.qty < med.duration) {
+            alert(`Not enough stock for ${med.name}`);
+            return;
+        }
+    }
+
+    pres.meds.forEach(m => {
+        let stockItem = medicineStock.find(s => s.name === m.name);
+        stockItem.qty -= m.duration;
+        if (stockItem.qty < 50) {
+            alert(`⚠️ Low Stock: ${m.name} remaining ${stockItem.qty}`);
+        }
+    });
+
+    pharmacistActivities.push(`Pharmacist sold prescription for Patient: ${pres.pid}`);
+    pendingPharmacy.splice(i, 1);
+
+    alert("Sale completed!");
+    showSalesList();
+}
+
+function showViewStock() {
+    let html = "";
+
+    if (medicineStock.length === 0) {
+        html = "<p>No stock added yet</p>";
+    } else {
+        medicineStock.forEach(m => {
+            html += `
+                <div class="card">
+                    <strong>${m.name}</strong><br>
+                    Dose: ${m.dosage}<br>
+                    Expiry: ${m.expiry}<br>
+                    Qty: ${m.qty}
+                </div>
+            `;
+        });
+    }
+
+    stockList.innerHTML = html;
+    showPage('viewStockPage');
+}
+
+
 </script>
+
 
 </body>
 </html>
