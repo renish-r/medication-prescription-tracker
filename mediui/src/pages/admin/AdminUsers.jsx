@@ -103,11 +103,16 @@ export default function AdminUsers() {
     if (!window.confirm('Permanently delete this user?')) return;
     setError('');
     try {
+      console.log('Deleting user:', userId, 'with token:', token?.substring(0, 20) + '...');
       const res = await apiFetch(`/admin/users/${userId}`, { method: 'DELETE', token });
+      console.log('Delete response:', res);
       if (res?.success) {
         setUsers((prev) => prev.filter((u) => u.id !== userId));
+      } else {
+        setError(res?.message || 'Delete failed');
       }
     } catch (err) {
+      console.error('Delete error:', err);
       setError(err.message);
     }
   };

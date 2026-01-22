@@ -4,11 +4,14 @@ import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/Login';
 import SignupPage from './pages/Signup';
+import ForgotPassword from './components/ForgotPassword';
 import PatientPrescriptions from './pages/patient/PatientPrescriptions';
 import DoctorPrescriptions from './pages/doctor/DoctorPrescriptions';
 import InventoryPage from './pages/pharmacist/Inventory';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
+import ProfileEditor from './components/ProfileEditor';
+import ChangePassword from './components/ChangePassword';
 
 const tiles = [
   { role: 'PATIENT', to: '/patient', title: 'Patient workspace', description: 'Track active prescriptions and refills.', icon: '💊' },
@@ -22,10 +25,10 @@ function Topbar() {
   const role = user?.role?.toUpperCase();
   const linkClass = ({ isActive }) => (isActive ? 'nav-link active' : 'nav-link');
   const roleLinks = [
-    { role: 'PATIENT', to: '/patient', label: 'Patient' },
-    { role: 'DOCTOR', to: '/doctor', label: 'Doctor' },
-    { role: 'PHARMACIST', to: '/pharmacist', label: 'Pharmacist' },
-    { role: 'ADMIN', to: '/admin', label: 'Admin' },
+    { role: 'PATIENT', to: '/patient', label: 'Dashboard' },
+    { role: 'DOCTOR', to: '/doctor', label: 'Dashboard' },
+    { role: 'PHARMACIST', to: '/pharmacist', label: 'Dashboard' },
+    { role: 'ADMIN', to: '/admin', label: 'Dashboard' },
   ].filter((r) => r.role === role);
 
   return (
@@ -39,6 +42,7 @@ function Topbar() {
                 {link.label}
               </NavLink>
             ))}
+            <NavLink to="/profile" className={linkClass}>Profile</NavLink>
             <div className="chip">{role || 'User'}</div>
             <span className="muted small">{user?.email}</span>
             <button className="ghost" onClick={logout}>Logout</button>
@@ -46,6 +50,7 @@ function Topbar() {
         ) : (
           <div className="nav-actions">
             <NavLink to="/login" className={linkClass}>Login</NavLink>
+            <NavLink to="/forgot-password" className={linkClass}>Forgot Password</NavLink>
             <NavLink to="/signup" className="nav-link filled">Sign up</NavLink>
           </div>
         )}
@@ -94,9 +99,12 @@ function App() {
         <Routes>
           <Route path="/login" element={isAuthed ? <Navigate to="/" replace /> : <LoginPage />} />
           <Route path="/signup" element={isAuthed ? <Navigate to="/" replace /> : <SignupPage />} />
+          <Route path="/forgot-password" element={isAuthed ? <Navigate to="/" replace /> : <ForgotPassword />} />
 
           <Route element={<ProtectedRoute />}>
             <Route index element={<Dashboard />} />
+            <Route path="/profile" element={<ProfileEditor />} />
+            <Route path="/change-password" element={<ChangePassword />} />
           </Route>
 
           <Route element={<ProtectedRoute roles={['PATIENT']} />}>
@@ -114,6 +122,7 @@ function App() {
           <Route element={<ProtectedRoute roles={['ADMIN']} />}>
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsers />} />
+            
           </Route>
 
           <Route path="*" element={<Navigate to={isAuthed ? '/' : '/login'} replace />} />

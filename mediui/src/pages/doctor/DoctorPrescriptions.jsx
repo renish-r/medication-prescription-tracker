@@ -70,6 +70,11 @@ export default function DoctorPrescriptions() {
     }
   };
 
+  const getMinDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
   const createPatient = async (e) => {
     e.preventDefault();
     setPatientError('');
@@ -149,7 +154,7 @@ export default function DoctorPrescriptions() {
             ))}
           </select>
           <input name="diagnosis" placeholder="Diagnosis" value={form.diagnosis} onChange={(e) => setForm({ ...form, diagnosis: e.target.value })} />
-          <input name="expiryDate" type="date" value={form.expiryDate} onChange={(e) => setForm({ ...form, expiryDate: e.target.value })} />
+          <input name="expiryDate" type="date" value={form.expiryDate} onChange={(e) => setForm({ ...form, expiryDate: e.target.value })} min={getMinDate()} />
 
           <div className="section">
             <div className="section-header">
