@@ -38,6 +38,35 @@ export default function PatientPrescriptions() {
     setTimeout(() => setSelectedPrescription(null), 300);
   };
 
+  const downloadPDF = async (prescriptionId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/prescriptions/${prescriptionId}/download-pdf`,
+        {
+          headers: { 
+            'Authorization': `Bearer ${user.token}` 
+          }
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to download PDF');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `prescription_${prescriptionId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      setError('Failed to download PDF: ' + err.message);
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'ACTIVE':
@@ -283,6 +312,13 @@ export default function PatientPrescriptions() {
             </div>
 
             <div style={{ padding: '16px', borderTop: '1px solid #eee', display: 'flex', gap: '8px' }}>
+              <button 
+                className="primary" 
+                onClick={() => downloadPDF(selectedPrescription.id)}
+                style={{ flex: 1 }}
+              >
+                📄 Download PDF
+              </button>
               <button className="secondary" onClick={closeDetails} style={{ flex: 1 }}>
                 Close
               </button>

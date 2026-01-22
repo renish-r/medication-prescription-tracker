@@ -47,9 +47,32 @@ export default function SignupPage() {
     <div className="auth-card">
       <h1>Create account</h1>
       <form onSubmit={onSubmit} className="form">
-        <input name="name" placeholder="Full name" value={form.name} onChange={onChange} required />
-        <input name="email" type="email" placeholder="Email" value={form.email} onChange={onChange} required />
-        <input name="password" type="password" placeholder="Password" value={form.password} onChange={onChange} required />
+        <input
+          name="name"
+          placeholder="Full name"
+          value={form.name}
+          onChange={onChange}
+          autoComplete="name"
+          required
+        />
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={onChange}
+          autoComplete="email"
+          required
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={onChange}
+          autoComplete="new-password"
+          required
+        />
         <select name="role" value={form.role} onChange={onChange}>
           <option value="PATIENT">Patient</option>
           <option value="DOCTOR">Doctor</option>

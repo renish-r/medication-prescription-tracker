@@ -30,7 +30,15 @@ export default function LoginPage() {
     <div className="auth-card">
       <h1>Sign in</h1>
       <form onSubmit={onSubmit} className="form">
-        <input name="email" type="email" placeholder="Email" value={form.email} onChange={onChange} required />
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={onChange}
+          autoComplete="email"
+          required
+        />
         <div className="password-field">
           <input
             name="password"
@@ -38,6 +46,7 @@ export default function LoginPage() {
             placeholder="Password"
             value={form.password}
             onChange={onChange}
+            autoComplete="current-password"
             required
           />
           <button

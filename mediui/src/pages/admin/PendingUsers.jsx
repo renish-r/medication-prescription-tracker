@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 export default function PendingUsers() {
   const { user } = useAuth();
@@ -8,6 +9,8 @@ export default function PendingUsers() {
   const [pendingUsers, setPendingUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [targetUser, setTargetUser] = useState(null);
 
   const loadPendingUsers = async () => {
     setError('');
@@ -31,7 +34,6 @@ export default function PendingUsers() {
     try {
       const res = await apiFetch(`/admin/users/${userId}/activate`, { method: 'PUT', token });
       if (res?.success) {
-        // Remove from pending list
         setPendingUsers((prev) => prev.filter((u) => u.id !== userId));
       }
     } catch (err) {
@@ -40,12 +42,13 @@ export default function PendingUsers() {
   };
 
   const deleteUser = async (userId) => {
-    if (!window.confirm('Permanently delete this pending account?')) return;
     setError('');
     try {
       const res = await apiFetch(`/admin/users/${userId}`, { method: 'DELETE', token });
       if (res?.success) {
         setPendingUsers((prev) => prev.filter((u) => u.id !== userId));
+        setConfirmOpen(false);
+        setTargetUser(null);
       }
     } catch (err) {
       setError(err.message);
@@ -64,7 +67,6 @@ export default function PendingUsers() {
           </div>
         </div>
         {error && <div className="error">{error}</div>}
-        
         {loading ? (
           <div className="muted">Loading…</div>
         ) : pendingUsers.length === 0 ? (
@@ -79,6 +81,35 @@ export default function PendingUsers() {
                   <div className="muted">Created by: {u.createdBy || 'SELF'}</div>
                   <div className="muted">Status: Inactive</div>
                 </div>
-                  // Deprecated: PendingUsers page was part of a removed workflow and is intentionally unused.
-                  export default function PendingUsers() { return null; }
-                  <button 
+                <div className="pill-group">
+                  <span className="pill">ID {u.id}</span>
+                  <button type="button" className="secondary" onClick={() => activateUser(u.id)}>
+                    Activate
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary"
+                    style={{ color: '#991b1b' }}
+                    onClick={() => { setTargetUser(u); setConfirmOpen(true); }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title="Delete Pending User"
+        message={`Permanently delete ${targetUser?.email}? This cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={() => targetUser && deleteUser(targetUser.id)}
+        onCancel={() => { setConfirmOpen(false); setTargetUser(null); }}
+      />
+    </div>
+  );
+}
+

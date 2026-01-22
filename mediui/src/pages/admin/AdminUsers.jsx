@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { apiFetch } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const roleOptions = ['ADMIN', 'DOCTOR', 'PATIENT', 'PHARMACIST'];
 const filterOptions = ['ALL', ...roleOptions];
@@ -30,6 +31,8 @@ export default function AdminUsers() {
     gender: '',
   });
   const [filterRole, setFilterRole] = useState('ALL');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [targetUser, setTargetUser] = useState(null);
 
   const activeCount = useMemo(() => users.filter((u) => u.active).length, [users]);
   const filteredUsers = useMemo(
@@ -100,7 +103,6 @@ export default function AdminUsers() {
   };
 
   const deleteUser = async (userId) => {
-    if (!window.confirm('Permanently delete this user?')) return;
     setError('');
     try {
       console.log('Deleting user:', userId, 'with token:', token?.substring(0, 20) + '...');
@@ -108,6 +110,8 @@ export default function AdminUsers() {
       console.log('Delete response:', res);
       if (res?.success) {
         setUsers((prev) => prev.filter((u) => u.id !== userId));
+        setConfirmOpen(false);
+        setTargetUser(null);
       } else {
         setError(res?.message || 'Delete failed');
       }
@@ -199,7 +203,12 @@ export default function AdminUsers() {
                   <button type="button" className="secondary" onClick={() => toggleStatus(u.id)}>
                     {u.active ? 'Deactivate' : 'Activate'}
                   </button>
-                  <button type="button" className="secondary" style={{color: '#991b1b'}} onClick={() => deleteUser(u.id)}>
+                  <button
+                    type="button"
+                    className="secondary"
+                    style={{ color: '#991b1b' }}
+                    onClick={() => { setTargetUser(u); setConfirmOpen(true); }}
+                  >
                     Delete
                   </button>
                 </div>
@@ -208,6 +217,15 @@ export default function AdminUsers() {
           </div>
         )}
       </div>
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title="Delete User"
+        message={`Permanently delete ${targetUser?.email}? This cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={() => targetUser && deleteUser(targetUser.id)}
+        onCancel={() => { setConfirmOpen(false); setTargetUser(null); }}
+      />
     </div>
   );
 }

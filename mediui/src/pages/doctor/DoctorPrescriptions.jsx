@@ -175,6 +175,31 @@ export default function DoctorPrescriptions() {
     }
   };
 
+  const downloadPDF = async (prescriptionId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/prescriptions/${prescriptionId}/download-pdf`,
+        {
+          headers: {
+            'Authorization': `Bearer ${user?.token}`
+          }
+        }
+      );
+      if (!response.ok) throw new Error('Failed to download PDF');
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `prescription_${prescriptionId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      setError('Failed to download PDF: ' + err.message);
+    }
+  };
+
   const startEdit = (prescription) => {
     setEditingPrescription({
       ...prescription,
@@ -509,6 +534,7 @@ export default function DoctorPrescriptions() {
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <button className="secondary" onClick={() => renew(p.id)}>Renew</button>
                   <button className="secondary" onClick={() => startEdit(p)}>Edit</button>
+                  <button className="secondary" onClick={() => downloadPDF(p.id)}>Download PDF</button>
                   <button className="secondary danger" onClick={() => openDeleteModal(p)}>Delete</button>
                 </div>
               </div>
