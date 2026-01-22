@@ -6,6 +6,14 @@ import './MedicationTracker.css';
 
 const MedicationTracker = () => {
   const { user } = useAuth();
+  const isPatient = user?.role === 'PATIENT';
+  
+  console.log('MedicationTracker user:', { 
+    email: user?.email, 
+    role: user?.role, 
+    isPatient,
+    tokenPreview: user?.token?.substring(0, 50) + '...'
+  });
   const [todaysMeds, setTodaysMeds] = useState([]);
   const [allSchedules, setAllSchedules] = useState([]);
   const [doseLogs, setDoseLogs] = useState([]);
@@ -19,24 +27,37 @@ const MedicationTracker = () => {
 
   // Fetch patient's medication schedules
   useEffect(() => {
-    fetchSchedules();
-    fetchDoseLogs();
-    calculateAdherence();
-  }, []);
+    if (!user?.token) return;
+    if (!isPatient) {
+      setError('Please log in with a patient account to view medications.');
+      setLoading(false);
+      return;
+    }
+    refreshAll();
+  }, [user?.token, isPatient]);
 
-  const fetchSchedules = async () => {
+  const refreshAll = async () => {
+    if (!isPatient) {
+      setError('Please log in with a patient account to view medications.');
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      const data = await apiFetch('/patient/schedules', { token: user?.token });
-      setAllSchedules(Array.isArray(data) ? data : []);
-      filterTodaysMeds(Array.isArray(data) ? data : []);
-      setError(null);
+      await Promise.all([fetchSchedules(), fetchDoseLogs(), calculateAdherence()]);
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching schedules:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchSchedules = async () => {
+    const data = await apiFetch('/patient/schedules', { token: user?.token });
+    const schedules = Array.isArray(data) ? data : [];
+    setAllSchedules(schedules);
+    filterTodaysMeds(schedules);
   };
 
   const filterTodaysMeds = (schedules) => {
@@ -61,22 +82,13 @@ const MedicationTracker = () => {
   };
 
   const fetchDoseLogs = async () => {
-    try {
-      const data = await apiFetch('/patient/dose-logs', { token: user?.token });
-      setDoseLogs(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error('Error fetching dose logs:', err);
-    }
+    const data = await apiFetch('/patient/dose-logs', { token: user?.token });
+    setDoseLogs(Array.isArray(data) ? data : []);
   };
 
   const calculateAdherence = async () => {
-    try {
-      const data = await apiFetch('/patient/adherence', { token: user?.token });
-      setAdherence(data.adherencePercentage || 0);
-    } catch (err) {
-      console.error('Error calculating adherence:', err);
-      setAdherence(0);
-    }
+    const data = await apiFetch('/patient/schedules/adherence/me', { token: user?.token });
+    setAdherence(data.adherencePercentage || 0);
   };
 
   const logDose = async (scheduleId, status) => {
@@ -93,8 +105,8 @@ const MedicationTracker = () => {
       setTimeout(() => setSuccessMessage(''), 3000);
 
       // Refresh data
-      await fetchDoseLogs();
-      await calculateAdherence();
+      await Promise.all([fetchDoseLogs(), calculateAdherence()]);
+      filterTodaysMeds(allSchedules);
     } catch (err) {
       setError(`Failed to log dose: ${err.message}`);
       setTimeout(() => setError(null), 3000);
@@ -143,9 +155,16 @@ const MedicationTracker = () => {
   const handleAddSuccess = () => {
     setSuccessMessage('✓ Medication schedule added successfully!');
     setTimeout(() => setSuccessMessage(''), 3000);
-    fetchSchedules();
-    calculateAdherence();
+    refreshAll();
   };
+
+  if (!isPatient) {
+    return (
+      <div className="medication-tracker loading">
+        Please log in with a patient account to view medications.
+      </div>
+    );
+  }
 
   if (loading) {
     return <div className="medication-tracker loading">Loading medications...</div>;

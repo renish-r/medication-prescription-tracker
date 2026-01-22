@@ -48,7 +48,7 @@ export default function InventoryPage() {
           ...form,
           stockQuantity: Number(form.stockQuantity),
           threshold: Number(form.threshold),
-          unitPrice: form.unitPrice ? Number(form.unitPrice) : null,
+          unitPrice: Number(form.unitPrice),
         },
       });
       setForm({ drugName: '', batchNumber: '', expiryDate: '', stockQuantity: '', threshold: '', unitPrice: '', manufacturer: '' });
@@ -75,8 +75,8 @@ export default function InventoryPage() {
           <input name="expiryDate" type="date" value={form.expiryDate} onChange={onChange} required />
           <input name="stockQuantity" type="number" placeholder="Stock quantity" value={form.stockQuantity} onChange={onChange} required />
           <input name="threshold" type="number" placeholder="Low-stock threshold" value={form.threshold} onChange={onChange} required />
-          <input name="unitPrice" type="number" step="0.01" placeholder="Unit price" value={form.unitPrice} onChange={onChange} />
-          <input name="manufacturer" placeholder="Manufacturer" value={form.manufacturer} onChange={onChange} />
+          <input name="unitPrice" type="number" step="0.01" placeholder="Unit price" value={form.unitPrice} onChange={onChange} required />
+          <input name="manufacturer" placeholder="Manufacturer" value={form.manufacturer} onChange={onChange} required />
           {error && <div className="error">{error}</div>}
           <button type="submit" disabled={loading}>{loading ? 'Saving…' : 'Add to inventory'}</button>
         </form>

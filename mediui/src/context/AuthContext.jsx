@@ -25,7 +25,19 @@ export function AuthProvider({ children }) {
       body: { email, password },
     });
     if (!data.success || !data.token) throw new Error(data.message || 'Login failed');
-    setUser({ token: data.token, role: data.role ? data.role.toUpperCase() : undefined, email });
+    
+    // Parse role from response or decode from JWT token
+    let role = data.role ? data.role.toUpperCase() : undefined;
+    if (!role && data.token) {
+      try {
+        const payload = JSON.parse(atob(data.token.split('.')[1]));
+        role = payload.role;
+      } catch (e) {
+        console.warn('Failed to parse JWT role:', e);
+      }
+    }
+    
+    setUser({ token: data.token, role, email });
     return data;
   }, []);
 

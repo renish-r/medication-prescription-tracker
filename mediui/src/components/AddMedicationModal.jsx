@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './AddMedicationModal.css';
+import { apiFetch } from '../api/client';
 
 const AddMedicationModal = ({ isOpen, onClose, onSuccess, user }) => {
   const [formData, setFormData] = useState({
@@ -25,19 +26,11 @@ const AddMedicationModal = ({ isOpen, onClose, onSuccess, user }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/patient/schedules', {
+      await apiFetch('/patient/schedules', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${user?.token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+        token: user?.token,
+        body: formData,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create schedule');
-      }
 
       // Reset form
       setFormData({

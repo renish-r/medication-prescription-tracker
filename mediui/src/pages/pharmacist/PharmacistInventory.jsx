@@ -3,6 +3,44 @@ import { useAuth } from '../../context/AuthContext';
 import { apiFetch } from '../../api/client';
 import './PharmacistInventory.css';
 
+const COMMON_MEDICINES = [
+  'Paracetamol 500mg',
+  'Paracetamol 650mg',
+  'Ibuprofen 400mg',
+  'Amoxicillin 500mg',
+  'Azithromycin 500mg',
+  'Ciprofloxacin 500mg',
+  'Metformin 500mg',
+  'Atorvastatin 10mg',
+  'Amlodipine 5mg',
+  'Losartan 50mg',
+  'Omeprazole 20mg',
+  'Pantoprazole 40mg',
+  'Cetirizine 10mg',
+  'Montelukast 10mg',
+  'Salbutamol Inhaler',
+  'Aspirin 75mg',
+  'Clopidogrel 75mg',
+  'Levothyroxine 50mcg',
+  'Insulin Glargine',
+  'Metoprolol 50mg',
+  'Furosemide 40mg',
+  'Spironolactone 25mg',
+  'Prednisolone 5mg',
+  'Diclofenac 50mg',
+  'Ranitidine 150mg',
+  'Domperidone 10mg',
+  'Loperamide 2mg',
+  'Vitamin D3 1000IU',
+  'Calcium + Vitamin D',
+  'Multivitamin Tablet',
+  'Iron + Folic Acid',
+  'Zinc Sulphate 20mg',
+  'Doxycycline 100mg',
+  'Cefixime 200mg',
+  'Fluconazole 150mg',
+];
+
 const PharmacistInventory = () => {
   const { user } = useAuth();
   const [items, setItems] = useState([]);
@@ -72,7 +110,7 @@ const PharmacistInventory = () => {
           ...form,
           stockQuantity: Number(form.stockQuantity),
           threshold: Number(form.threshold),
-          unitPrice: form.unitPrice ? Number(form.unitPrice) : null,
+          unitPrice: Number(form.unitPrice),
         },
       });
       
@@ -564,9 +602,15 @@ const PharmacistInventory = () => {
                     name="drugName"
                     value={form.drugName}
                     onChange={(e) => setForm({ ...form, drugName: e.target.value })}
+                    list="pharmacy-common-medicines"
                     placeholder="e.g., Paracetamol"
                     required
                   />
+                  <datalist id="pharmacy-common-medicines">
+                    {COMMON_MEDICINES.map((med, idx) => (
+                      <option key={idx} value={med} />
+                    ))}
+                  </datalist>
                 </div>
 
                 <div className="form-group">
@@ -619,7 +663,7 @@ const PharmacistInventory = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Unit Price</label>
+                  <label>Unit Price <span className="required">*</span></label>
                   <input
                     type="number"
                     name="unitPrice"
@@ -628,17 +672,19 @@ const PharmacistInventory = () => {
                     placeholder="e.g., 5.99"
                     step="0.01"
                     min="0"
+                    required
                   />
                 </div>
 
                 <div className="form-group full-width">
-                  <label>Manufacturer</label>
+                  <label>Manufacturer <span className="required">*</span></label>
                   <input
                     type="text"
                     name="manufacturer"
                     value={form.manufacturer}
                     onChange={(e) => setForm({ ...form, manufacturer: e.target.value })}
                     placeholder="e.g., Pfizer"
+                    required
                   />
                 </div>
               </div>

@@ -10,6 +10,7 @@ export default function PatientPrescriptions() {
   const [error, setError] = useState('');
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [showTracker, setShowTracker] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -104,10 +105,72 @@ export default function PatientPrescriptions() {
   if (loading) return <div className="card"><p>Loading prescriptions…</p></div>;
 
   return (
-    <div className="stack">
-      <MedicationTracker />
+    <>
+      {/* Full-Screen Medication Tracker Modal */}
+      {showTracker && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: '#f5f5f5',
+          zIndex: 1999,
+          overflowY: 'auto',
+          paddingBottom: '20px',
+        }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+            {/* Close Button - Scrolls with content */}
+            <div style={{ marginBottom: '20px', textAlign: 'right' }}>
+              <button
+                onClick={() => setShowTracker(false)}
+                style={{
+                  background: 'white',
+                  color: '#2196f3',
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+              >
+                ✕ Close
+              </button>
+            </div>
+
+            <MedicationTracker />
+          </div>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="stack">
+        {/* Medication Tracker Reminder Button */}
+        <div className="card" style={{ backgroundColor: '#e3f2fd', borderLeft: '4px solid #2196f3' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '24px' }}>💊</span>
+              <div>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>Medication Reminders</h3>
+                <p className="muted" style={{ margin: '0', fontSize: '13px' }}>Track your daily medication schedule</p>
+              </div>
+            </div>
+            <button 
+              className="primary" 
+              onClick={() => setShowTracker(true)}
+              style={{ whiteSpace: 'nowrap' }}
+            >
+              🔔 Open Tracker
+            </button>
+          </div>
+        </div>
       
-      {error && <div className="card error">{error}</div>}
+        {error && <div className="card error">{error}</div>}
       
       <div className="card">
         <div className="card-header">
@@ -326,6 +389,7 @@ export default function PatientPrescriptions() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
