@@ -1,0 +1,618 @@
+.medication-tracker {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  border-radius: 10px;
+}
+
+.medication-tracker.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  height: 100vh;
+}
+
+.tracker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.tracker-header h1 {
+  color: white;
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.adherence-badge {
+  background: white;
+  padding: 15px 25px;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.adherence-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #667eea;
+  line-height: 1;
+}
+
+.adherence-label {
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-add-medication {
+  padding: 12px 24px;
+  background: white;
+  color: #667eea;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-add-medication:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Messages */
+.success-message,
+.error-message {
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+}
+
+.success-message {
+  background-color: #10b981;
+  color: white;
+}
+
+.error-message {
+  background-color: #ef4444;
+  color: white;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tabs */
+.tracker-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.tab-btn.active {
+  background: white;
+  color: #667eea;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Tab Content */
+.tab-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Medications List */
+.medications-list,
+.schedules-list,
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Medication Card */
+.medication-card {
+  display: flex;
+  align-items: stretch;
+  gap: 15px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.medication-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.med-time-section {
+  border-left: 5px solid;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.time-badge {
+  padding: 15px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: 700;
+  min-width: 80px;
+}
+
+.time {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.time-label {
+  font-size: 11px;
+  margin-top: 5px;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.med-info {
+  flex: 1;
+  padding: 15px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.med-name {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+.med-frequency {
+  margin: 0;
+  color: #999;
+  font-size: 14px;
+}
+
+.frequency-badge {
+  display: inline-block;
+  background: #f0f0f0;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.med-dosage {
+  margin: 5px 0 0 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.med-status {
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 200px;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.status-badge.taken {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.missed {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.btn-taken,
+.btn-missed {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-taken {
+  background: #10b981;
+  color: white;
+}
+
+.btn-taken:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-missed {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-missed:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.btn-taken:disabled,
+.btn-missed:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Schedule Card */
+.schedule-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.schedule-card:hover {
+  transform: translateY(-5px);
+}
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.schedule-header h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.status-indicator {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-indicator.active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-indicator.inactive {
+  background: #f0f0f0;
+  color: #999;
+}
+
+.schedule-details {
+  margin-bottom: 15px;
+  color: #666;
+}
+
+.schedule-details p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.schedule-details strong {
+  color: #333;
+}
+
+.schedule-logs {
+  padding: 10px 0;
+}
+
+.schedule-logs strong {
+  font-size: 13px;
+  color: #333;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.log-summary {
+  display: flex;
+  gap: 8px;
+}
+
+.log-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.log-dot.taken {
+  background: #10b981;
+}
+
+.log-dot.missed {
+  background: #ef4444;
+}
+
+/* History List */
+.history-item {
+  display: flex;
+  gap: 15px;
+  background: white;
+  padding: 15px 20px;
+  border-radius: 12px;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.history-item:hover {
+  transform: translateX(5px);
+}
+
+.history-status {
+  min-width: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.status-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  font-size: 18px;
+}
+
+.status-icon.taken {
+  background: #10b981;
+}
+
+.status-icon.missed {
+  background: #ef4444;
+}
+
+.history-info {
+  flex: 1;
+}
+
+.history-info .med-name {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.timestamp {
+  margin: 0;
+  color: #999;
+  font-size: 13px;
+}
+
+.notes {
+  margin: 5px 0 0 0;
+  color: #666;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.history-status-badge {
+  display: flex;
+}
+
+.badge {
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge.taken {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge.missed {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  color: #999;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Footer */
+.tracker-footer {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.footer-info {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tracker-header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .tracker-header h1 {
+    font-size: 24px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-add-medication {
+    width: 100%;
+  }
+
+  .medication-card {
+    flex-direction: column;
+  }
+
+  .med-time-section {
+    border-left: none;
+    border-top: 5px solid;
+  }
+
+  .time-badge {
+    flex-direction: row;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+
+  .time {
+    font-size: 16px;
+  }
+
+  .med-status {
+    width: 100%;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .btn-taken,
+  .btn-missed {
+    width: 100%;
+  }
+
+  .tracker-tabs {
+    flex-direction: column;
+  }
+
+  .tab-btn {
+    padding: 15px;
+  }
+
+  .history-item {
+    flex-wrap: wrap;
+  }
+
+  .history-info {
+    flex-basis: 100%;
+  }
+
+  .history-status-badge {
+    width: 100%;
+    justify-content: center;
+  }
+}

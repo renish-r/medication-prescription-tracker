@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
+import MedicationTracker from '../../components/MedicationTracker';
 
 export default function PatientPrescriptions() {
   const { user } = useAuth();
@@ -75,6 +76,8 @@ export default function PatientPrescriptions() {
 
   return (
     <div className="stack">
+      <MedicationTracker />
+      
       {error && <div className="card error">{error}</div>}
       
       <div className="card">

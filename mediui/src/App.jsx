@@ -7,7 +7,9 @@ import SignupPage from './pages/Signup';
 import ForgotPassword from './components/ForgotPassword';
 import PatientPrescriptions from './pages/patient/PatientPrescriptions';
 import DoctorPrescriptions from './pages/doctor/DoctorPrescriptions';
+import PatientAdherence from './pages/doctor/PatientAdherence';
 import InventoryPage from './pages/pharmacist/Inventory';
+import PharmacistInventory from './pages/pharmacist/PharmacistInventory';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import ProfileEditor from './components/ProfileEditor';
@@ -26,7 +28,8 @@ function Topbar() {
   const linkClass = ({ isActive }) => (isActive ? 'nav-link active' : 'nav-link');
   const roleLinks = [
     { role: 'PATIENT', to: '/patient', label: 'Dashboard' },
-    { role: 'DOCTOR', to: '/doctor', label: 'Dashboard' },
+    { role: 'DOCTOR', to: '/doctor', label: 'Prescriptions' },
+    { role: 'DOCTOR', to: '/doctor/adherence', label: 'Patient Adherence' },
     { role: 'PHARMACIST', to: '/pharmacist', label: 'Dashboard' },
     { role: 'ADMIN', to: '/admin', label: 'Dashboard' },
   ].filter((r) => r.role === role);
@@ -113,10 +116,11 @@ function App() {
 
           <Route element={<ProtectedRoute roles={['DOCTOR']} />}>
             <Route path="/doctor" element={<DoctorPrescriptions />} />
+            <Route path="/doctor/adherence" element={<PatientAdherence />} />
           </Route>
 
           <Route element={<ProtectedRoute roles={['PHARMACIST']} />}>
-            <Route path="/pharmacist" element={<InventoryPage />} />
+            <Route path="/pharmacist" element={<PharmacistInventory />} />
           </Route>
 
           <Route element={<ProtectedRoute roles={['ADMIN']} />}>
