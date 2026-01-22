@@ -77,6 +77,8 @@ export default function DoctorPrescriptions() {
   const [patientForm, setPatientForm] = useState({ name: '', email: '', password: '', age: '', gender: '' });
   const [patientError, setPatientError] = useState('');
   const [patientResult, setPatientResult] = useState('');
+  const [editingPrescription, setEditingPrescription] = useState(null);
+  const [deleteModal, setDeleteModal] = useState({ open: false, prescriptionId: null, diagnosis: '' });
 
   const load = async () => {
     try {
@@ -170,6 +172,79 @@ export default function DoctorPrescriptions() {
       load();
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  const startEdit = (prescription) => {
+    setEditingPrescription({
+      ...prescription,
+      medications: prescription.medicines || []
+    });
+    // Reset the form and populate with prescription data
+    setForm({
+      patientId: prescription.patient?.id || '',
+      diagnosis: prescription.diagnosis || '',
+      expiryDate: prescription.expiryDate || '',
+      medications: prescription.medicines ? prescription.medicines.map(m => ({
+        name: m.medicineName,
+        dosage: m.dosage,
+        timing: m.frequency,
+        duration: m.durationDays + ' days',
+        notes: m.instructions || ''
+      })) : [emptyMed]
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingPrescription(null);
+    setForm({ patientId: '', diagnosis: '', expiryDate: '', medications: [emptyMed] });
+    setError('');
+  };
+
+  const saveEdit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      await apiFetch(`/doctor/prescriptions/${editingPrescription.id}`, {
+        method: 'PUT',
+        token: user?.token,
+        body: {
+          patientId: Number(form.patientId),
+          diagnosis: form.diagnosis,
+          expiryDate: form.expiryDate || null,
+          medications: form.medications,
+        },
+      });
+      cancelEdit();
+      load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openDeleteModal = (prescription) => {
+    setDeleteModal({ open: true, prescriptionId: prescription.id, diagnosis: prescription.diagnosis });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModal({ open: false, prescriptionId: null, diagnosis: '' });
+  };
+
+  const confirmDelete = async () => {
+    setError('');
+    try {
+      await apiFetch(`/doctor/prescriptions/${deleteModal.prescriptionId}`, {
+        method: 'DELETE',
+        token: user?.token
+      });
+      load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      closeDeleteModal();
     }
   };
 
@@ -320,24 +395,158 @@ export default function DoctorPrescriptions() {
         <div className="card-header">
           <div>
             <h2>My prescriptions</h2>
-            <p className="muted">Click renew to clone an active one</p>
+            <p className="muted">{editingPrescription ? 'Edit prescription' : 'Click renew to clone an active one'}</p>
           </div>
         </div>
-        <div className="list">
-          {list.map((p) => (
-            <div key={p.id} className="list-item">
-              <div>
-                <div className="title">{p.diagnosis || 'Prescription'}</div>
-                <div className="muted">Patient: {p.patient?.email}</div>
-                <div className="muted">Status: {p.status}</div>
+        {editingPrescription ? (
+          <form className="form" onSubmit={saveEdit}>
+            <select value={form.patientId} onChange={(e) => setForm({ ...form, patientId: e.target.value })} required>
+              <option value="">Select patient</option>
+              {patients.map((p) => (
+                <option key={p.id} value={p.id}>{p.name} ({p.email})</option>
+              ))}
+            </select>
+            <input name="diagnosis" placeholder="Diagnosis" value={form.diagnosis} onChange={(e) => setForm({ ...form, diagnosis: e.target.value })} required />
+            <input name="expiryDate" type="date" value={form.expiryDate} onChange={(e) => setForm({ ...form, expiryDate: e.target.value })} />
+            
+            <h3>Medicines</h3>
+            <button type="button" onClick={addMed} className="secondary">Add medicine</button>
+
+            {form.medications.map((m, idx) => {
+              const hasName = m.name && m.name.trim() !== '';
+              const { formLabel, options } = getDosageOptions(m.name);
+              const listId = `common-medicines-${idx}`;
+              return (
+                <div key={idx}>
+                  <input list={listId} placeholder="Medicine name" value={m.name} onChange={(e) => updateMed(idx, 'name', e.target.value)} required />
+                  <datalist id={listId}>
+                    {COMMON_MEDICINES.map((med, i) => (
+                      <option key={i} value={med} />
+                    ))}
+                  </datalist>
+                  
+                  <select 
+                    value={m.dosage} 
+                    onChange={(e) => updateMed(idx, 'dosage', e.target.value)}
+                    disabled={!hasName}
+                    required
+                  >
+                    <option value="">Select dosage ({formLabel})</option>
+                    {options.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                    {m.dosage && !options.includes(m.dosage) && (
+                      <option value={m.dosage}>{m.dosage} (custom)</option>
+                    )}
+                  </select>
+                  
+                  <select 
+                    value={m.timing} 
+                    onChange={(e) => updateMed(idx, 'timing', e.target.value)}
+                    disabled={!hasName}
+                    required
+                  >
+                    <option value="">Select Timing</option>
+                    <option value="Once daily - Morning">Once daily - Morning</option>
+                    <option value="Once daily - Evening">Once daily - Evening</option>
+                    <option value="Once daily - Bedtime">Once daily - Bedtime</option>
+                    <option value="Twice daily - Morning & Evening">Twice daily - Morning & Evening</option>
+                    <option value="Twice daily - After meals">Twice daily - After meals</option>
+                    <option value="Three times daily - After meals">Three times daily - After meals</option>
+                    <option value="Four times daily">Four times daily</option>
+                    <option value="Before breakfast">Before breakfast</option>
+                    <option value="After breakfast">After breakfast</option>
+                    <option value="Before lunch">Before lunch</option>
+                    <option value="After lunch">After lunch</option>
+                    <option value="Before dinner">Before dinner</option>
+                    <option value="After dinner">After dinner</option>
+                    <option value="Every 4-6 hours as needed">Every 4-6 hours as needed</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="As needed">As needed (SOS)</option>
+                  </select>
+                  
+                  <select 
+                    value={m.duration} 
+                    onChange={(e) => updateMed(idx, 'duration', e.target.value)}
+                    disabled={!hasName}
+                    required
+                  >
+                    <option value="">Select Duration</option>
+                    <option value="3 days">3 days</option>
+                    <option value="5 days">5 days</option>
+                    <option value="7 days">7 days (1 week)</option>
+                    <option value="10 days">10 days</option>
+                    <option value="14 days">14 days (2 weeks)</option>
+                    <option value="21 days">21 days (3 weeks)</option>
+                    <option value="30 days">30 days (1 month)</option>
+                    <option value="60 days">60 days (2 months)</option>
+                    <option value="90 days">90 days (3 months)</option>
+                    <option value="180 days">180 days (6 months)</option>
+                    <option value="Continuous">Continuous</option>
+                    <option value="As needed">As needed</option>
+                  </select>
+                  
+                  <input placeholder="Additional instructions (optional)" value={m.notes} onChange={(e) => updateMed(idx, 'notes', e.target.value)} />
+                  {form.medications.length > 1 && <button type="button" onClick={() => removeMed(idx)} className="link-btn">Remove</button>}
+                </div>
+              );
+            })}
+
+            {error && <div className="error">{error}</div>}
+            <button type="submit" disabled={loading}>{loading ? 'Saving…' : 'Save changes'}</button>
+            <button type="button" onClick={cancelEdit} className="link-btn">Cancel</button>
+          </form>
+        ) : (
+          <div className="list">
+            {list.map((p) => (
+              <div key={p.id} className="list-item">
+                <div>
+                  <div className="title">{p.diagnosis || 'Prescription'}</div>
+                  <div className="muted">Patient: {p.patient?.email}</div>
+                  <div className="muted">Status: {p.status}</div>
+                </div>
+                <div className="muted">Issued: {p.issuedDate}</div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button className="secondary" onClick={() => renew(p.id)}>Renew</button>
+                  <button className="secondary" onClick={() => startEdit(p)}>Edit</button>
+                  <button className="secondary danger" onClick={() => openDeleteModal(p)}>Delete</button>
+                </div>
               </div>
-              <div className="muted">Issued: {p.issuedDate}</div>
-              <button className="secondary" onClick={() => renew(p.id)}>Renew</button>
-            </div>
-          ))}
-          {list.length === 0 && <div className="muted">No prescriptions yet.</div>}
-        </div>
+            ))}
+            {list.length === 0 && <div className="muted">No prescriptions yet.</div>}
+          </div>
+        )}
       </div>
+
+      {deleteModal.open && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'white',
+            padding: '30px',
+            borderRadius: '10px',
+            maxWidth: '400px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
+          }}>
+            <h3 style={{ margin: '0 0 10px 0' }}>Delete Prescription</h3>
+            <p style={{ color: '#666', marginBottom: '20px' }}>{deleteModal.diagnosis || 'Prescription'}</p>
+            <p style={{ color: '#d32f2f', background: '#ffebee', padding: '10px', borderRadius: '6px', marginBottom: '20px' }}>
+              This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button onClick={closeDeleteModal} style={{ padding: '8px 16px', background: '#f0f0f0', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={confirmDelete} style={{ padding: '8px 16px', background: '#d32f2f', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -15,6 +15,8 @@ const PharmacistInventory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [updateModal, setUpdateModal] = useState({ open: false, item: null, quantity: '' });
+  const [deleteModal, setDeleteModal] = useState({ open: false, item: null });
   
   const [form, setForm] = useState({
     drugName: '',
@@ -28,6 +30,7 @@ const PharmacistInventory = () => {
 
   const [dispenseForm, setDispenseForm] = useState({
     inventoryId: '',
+    medicineName: '',
     quantity: '',
     patientName: '',
     prescriptionId: ''
@@ -106,6 +109,7 @@ const PharmacistInventory = () => {
       
       setDispenseForm({
         inventoryId: '',
+        medicineName: '',
         quantity: '',
         patientName: '',
         prescriptionId: ''
@@ -119,16 +123,59 @@ const PharmacistInventory = () => {
   };
 
   const handleUpdateStock = async (itemId, newQuantity) => {
+    const numericQty = Number(newQuantity);
+    if (Number.isNaN(numericQty)) {
+      setError('Please enter a valid quantity.');
+      return;
+    }
+
     try {
-      await apiFetch(`/pharmacist/inventory/${itemId}/update-stock`, {
+      await apiFetch(`/pharmacist/inventory/${itemId}/update-stock?quantity=${numericQty}`, {
         method: 'PUT',
-        token: user?.token,
-        body: { stockQuantity: Number(newQuantity) }
+        token: user?.token
       });
       
       loadInventory();
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  const openUpdateModal = (item) => {
+    setUpdateModal({ open: true, item, quantity: item.stockQuantity });
+  };
+
+  const closeUpdateModal = () => {
+    setUpdateModal({ open: false, item: null, quantity: '' });
+  };
+
+  const submitUpdateModal = async (e) => {
+    e.preventDefault();
+    if (!updateModal.item) return;
+    await handleUpdateStock(updateModal.item.id, updateModal.quantity);
+    closeUpdateModal();
+  };
+
+  const openDeleteModal = (item) => {
+    setDeleteModal({ open: true, item });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModal({ open: false, item: null });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteModal.item) return;
+    try {
+      await apiFetch(`/pharmacist/inventory/${deleteModal.item.id}`, {
+        method: 'DELETE',
+        token: user?.token
+      });
+      loadInventory();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      closeDeleteModal();
     }
   };
 
@@ -302,14 +349,16 @@ const PharmacistInventory = () => {
                       </button>
                       <button 
                         className="action-btn secondary"
-                        onClick={() => {
-                          const newQty = prompt(`Update stock for ${item.drugName}:`, item.stockQuantity);
-                          if (newQty !== null && !isNaN(newQty)) {
-                            handleUpdateStock(item.id, newQty);
-                          }
-                        }}
+                        onClick={() => openUpdateModal(item)}
                       >
                         Update Stock
+                      </button>
+                      <button 
+                        className="action-btn danger"
+                        onClick={() => openDeleteModal(item)}
+                        title="Delete this inventory item"
+                      >
+                        🗑️ Delete
                       </button>
                     </div>
                   </div>
@@ -390,10 +439,38 @@ const PharmacistInventory = () => {
                     <button 
                       className="action-btn"
                       onClick={() => {
+                        // Calculate total quantity: frequency × dosage × duration
+                        let totalQuantity = 0;
+                        if (prescription.medicines && prescription.medicines.length > 0) {
+                          const firstMed = prescription.medicines[0];
+                          
+                          // Parse frequency (e.g., "2 times daily", "Once daily" -> extract number)
+                          const frequencyMatch = firstMed.frequency?.match(/\d+/);
+                          const frequency = frequencyMatch ? parseInt(frequencyMatch[0]) : 1;
+                          
+                          // Parse dosage (e.g., "500mg", "2 tablets", "1" -> extract number)
+                          const dosageMatch = firstMed.dosage?.match(/\d+/);
+                          const dosage = dosageMatch ? parseInt(dosageMatch[0]) : 1;
+                          
+                          // Parse duration (e.g., "30 days" -> extract number)
+                          const durationMatch = firstMed.durationDays?.toString().match(/\d+/);
+                          const duration = durationMatch ? parseInt(durationMatch[0]) : 30;
+                          
+                          // Total quantity = frequency × dosage × duration
+                          totalQuantity = frequency * dosage * duration;
+                        }
+
+                        const medicineName = prescription.medicines && prescription.medicines.length > 0
+                          ? prescription.medicines[0].medicineName
+                          : '';
+                        
                         setDispenseForm({ 
                           ...dispenseForm, 
                           prescriptionId: prescription.id,
-                          patientName: prescription.patientName || prescription.patientEmail 
+                          medicineName: medicineName,
+                          patientName: prescription.patientName || prescription.patientEmail,
+                          quantity: totalQuantity > 0 ? totalQuantity.toString() : '',
+                          inventoryId: ''
                         });
                         setActiveTab('dispense');
                       }}
@@ -586,14 +663,20 @@ const PharmacistInventory = () => {
             <h2>Dispense Medication</h2>
             <form onSubmit={handleDispense} className="inventory-form">
               <div className="form-grid">
+                {dispenseForm.medicineName && (
+                  <div className="form-group full-width">
+                    <label>Medicine from Prescription</label>
+                    <div className="form-readonly-field">📋 {dispenseForm.medicineName}</div>
+                  </div>
+                )}
                 <div className="form-group full-width">
-                  <label>Select Medication <span className="required">*</span></label>
+                  <label>Select Inventory Item <span className="required">*</span></label>
                   <select
                     value={dispenseForm.inventoryId}
                     onChange={(e) => setDispenseForm({ ...dispenseForm, inventoryId: e.target.value })}
                     required
                   >
-                    <option value="">Choose medication...</option>
+                    <option value="">Choose medication from inventory...</option>
                     {items.filter(i => i.stockQuantity > 0).map((item) => (
                       <option key={item.id} value={item.id}>
                         {item.drugName} - Batch: {item.batchNumber} (Stock: {item.stockQuantity})
@@ -645,6 +728,43 @@ const PharmacistInventory = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {updateModal.open && (
+        <div className="modal-overlay" role="presentation" onClick={closeUpdateModal}>
+          <div className="modal" role="dialog" aria-modal="true" aria-label="Update stock" onClick={(e) => e.stopPropagation()}>
+            <h3>Update Stock</h3>
+            <p className="modal-subtitle">{updateModal.item?.drugName}</p>
+            <form onSubmit={submitUpdateModal} className="modal-form">
+              <label htmlFor="updateQuantity">New quantity</label>
+              <input
+                id="updateQuantity"
+                type="number"
+                min="0"
+                step="1"
+                value={updateModal.quantity}
+                onChange={(e) => setUpdateModal((prev) => ({ ...prev, quantity: e.target.value }))}
+                autoFocus
+              />
+              <div className="modal-actions">
+                <button type="button" className="action-btn secondary" onClick={closeUpdateModal}>Cancel</button>
+                <button type="submit" className="action-btn">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {deleteModal.open && (
+        <div className="modal-overlay" role="presentation" onClick={closeDeleteModal}>
+          <div className="modal" role="dialog" aria-modal="true" aria-label="Delete inventory item" onClick={(e) => e.stopPropagation()}>
+            <h3>Delete Inventory Item</h3>
+            <p className="modal-subtitle">{deleteModal.item?.drugName}</p>
+            <p className="modal-warning">This will remove the item and its dispense records. This action cannot be undone.</p>
+            <div className="modal-actions">
+              <button type="button" className="action-btn secondary" onClick={closeDeleteModal}>Cancel</button>
+              <button type="button" className="action-btn danger" onClick={confirmDelete}>Delete</button>
+            </div>
           </div>
         </div>
       )}
