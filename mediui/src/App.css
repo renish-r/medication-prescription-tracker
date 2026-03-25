@@ -1,7 +1,7 @@
 :root {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  color: #0f172a;
-  background-color: #f3f6fb;
+  color: #e8f5e9;
+  background-color: #0a1f1a;
 }
 
 * {
@@ -10,8 +10,8 @@
 
 body {
   margin: 0;
-  background: #f3f6fb;
-  color: #0f172a;
+  background: #0a1f1a;
+  color: #e8f5e9;
 }
 
 a {
@@ -21,7 +21,7 @@ a {
 
 .app {
   min-height: 100vh;
-  background: linear-gradient(180deg, #f7fbff 0%, #eef2f7 50%, #f7fbff 100%);
+  background: linear-gradient(180deg, #0a1f1a 0%, #0d2821 50%, #0a1f1a 100%);
 }
 
 .topbar {
@@ -32,9 +32,10 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px;
-  border-bottom: 1px solid #d8e2f1;
+  border-bottom: 1px solid #1b4332;
   backdrop-filter: blur(6px);
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(13, 40, 33, 0.95);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .logo {
@@ -57,41 +58,41 @@ a {
 .nav-link {
   padding: 8px 12px;
   border-radius: 8px;
-  color: #0f172a;
+  color: #e8f5e9;
   border: 1px solid transparent;
 }
 
 .nav-link.active {
-  background: #e0ecff;
-  border-color: #b9d3ff;
+  background: rgba(56, 142, 60, 0.2);
+  border-color: #2e7d32;
 }
 
 .nav-link.filled {
-  background: #0b6bcb;
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
   color: white;
-  border: 1px solid #0b6bcb;
-  box-shadow: 0 4px 10px rgba(11, 107, 203, 0.2);
+  border: 1px solid #2e7d32;
+  box-shadow: 0 4px 10px rgba(46, 125, 50, 0.4);
 }
 
 .ghost {
   background: transparent;
-  border: 1px solid #d8e2f1;
-  color: #0f172a;
+  border: 1px solid #2d5f3e;
+  color: #e8f5e9;
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
 }
 
 .ghost:hover {
-  border-color: #0b6bcb;
-  color: #0b6bcb;
+  border-color: #4caf50;
+  color: #66bb6a;
 }
 
 .chip {
   padding: 6px 10px;
   border-radius: 999px;
-  background: #e5edff;
-  color: #1d4ed8;
+  background: rgba(46, 125, 50, 0.3);
+  color: #81c784;
   font-weight: 600;
   font-size: 13px;
 }
@@ -106,11 +107,11 @@ a {
   width: 100%;
   max-width: 420px;
   margin: 40px auto;
-  background: white;
-  border: 1px solid #dfe7f3;
+  background: #1a3a2e;
+  border: 1px solid #2d5f3e;
   border-radius: 16px;
   padding: 28px;
-  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
 .auth-card h1 {
@@ -127,36 +128,39 @@ select {
   width: 100%;
   padding: 12px 14px;
   border-radius: 10px;
-  border: 1px solid #dfe7f3;
-  background: #f9fbff;
+  border: 1px solid #2d5f3e;
+  background: #0d2821;
+  color: #e8f5e9;
   font-size: 15px;
 }
 
 input:focus,
 select:focus {
-  outline: 2px solid #0b6bcb;
-  background: white;
+  outline: 2px solid #4caf50;
+  background: #1a3a2e;
+  border-color: #4caf50;
 }
 
 button {
-  padding: 12px 14px;
+  padding: 12px ;
   border-radius: 10px;
   border: none;
-  background: #0b6bcb;
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
   color: white;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
 }
 
 button:disabled {
-  opacity: 0.7;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 button.secondary {
-  background: #eef2f7;
-  color: #0f172a;
-  border: 1px solid #dfe7f3;
+  background: #1a3a2e;
+  color: #e8f5e9;
+  border: 1px solid #2d5f3e;
 }
 
 button.link-btn {
@@ -173,11 +177,11 @@ button.link-btn {
 }
 
 .card {
-  background: white;
-  border: 1px solid #dfe7f3;
+  background: #1a3a2e;
+  border: 1px solid #2d5f3e;
   padding: 20px;
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .card-header {
@@ -188,12 +192,13 @@ button.link-btn {
 }
 
 .hero-card {
-  background: linear-gradient(135deg, #0b6bcb 0%, #0a4fa3 100%);
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
   color: white;
+  box-shadow: 0 8px 24px rgba(46, 125, 50, 0.3);
 }
 
 .hero-card .muted {
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .grid.cards {
@@ -205,16 +210,17 @@ button.link-btn {
 .tile {
   display: block;
   padding: 18px;
-  background: white;
+  background: #1a3a2e;
   border-radius: 14px;
-  border: 1px solid #dfe7f3;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+  border: 1px solid #2d5f3e;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .tile:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 22px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 12px 22px rgba(46, 125, 50, 0.3);
+  border-color: #4caf50;
 }
 
 .tile-icon {
@@ -230,26 +236,26 @@ button.link-btn {
 
 .list-item {
   padding: 14px;
-  border: 1px solid #e7edf6;
+  border: 1px solid #2d5f3e;
   border-radius: 12px;
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  background: #f9fbff;
+  background: #1a3a2e;
 }
 
 .list-item.warn {
-  background: #fff8e1;
-  border-color: #fde68a;
+  background: rgba(255, 152, 0, 0.15);
+  border-color: #ff9800;
 }
 
 .title {
   font-weight: 700;
-  color: #0f172a;
+  color: #e8f5e9;
 }
 
 .muted {
-  color: #64748b;
+  color: #a5d6a7;
   font-size: 14px;
 }
 
@@ -264,9 +270,9 @@ button.link-btn {
 }
 
 .pill {
-  background: #eef2ff;
-  border: 1px solid #d9e0ff;
-  color: #312e81;
+  background: rgba(46, 125, 50, 0.2);
+  border: 1px solid #2e7d32;
+  color: #81c784;
   border-radius: 999px;
   padding: 6px 10px;
   font-size: 13px;
@@ -294,9 +300,9 @@ button.link-btn {
 .error {
   padding: 10px;
   border-radius: 10px;
-  background: #fef2f2;
-  color: #991b1b;
-  border: 1px solid #fecdd3;
+  background: rgba(211, 47, 47, 0.2);
+  color: #ef5350;
+  border: 1px solid #c62828;
 }
 
 .grid.metrics {
@@ -308,8 +314,8 @@ button.link-btn {
 .metric {
   padding: 12px;
   border-radius: 12px;
-  background: #f9fbff;
-  border: 1px solid #e7edf6;
+  background: #1a3a2e;
+  border: 1px solid #2d5f3e;
   text-align: left;
   width: 100%;
   cursor: default;
@@ -321,14 +327,14 @@ button.link-btn {
 }
 
 .metric.clickable:hover {
-  border-color: #0b6bcb;
-  box-shadow: 0 6px 16px rgba(11, 107, 203, 0.15);
+  border-color: #4caf50;
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.3);
 }
 
 .stat-value {
   font-size: 24px;
   font-weight: 800;
-  color: #0b6bcb;
+  color: #66bb6a;
 }
 
 .password-field {
@@ -351,4 +357,14 @@ button.link-btn {
   font-size: 18px;
   padding: 0;
   width: auto;
+  margin-top: 0px;
+  color: #66bb6a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.toggle-password:hover {
+  color: #81c784;
 }

@@ -419,7 +419,7 @@ const PharmacistInventory = () => {
           ) : (
             <div className="inventory-grid">
               {prescriptions.map((prescription) => (
-                <div key={prescription.id} className="inventory-card">
+                <div key={prescription.id} className="inventory-card" style={{ background: '#0f241c', border: '1px solid #2d5f3e', boxShadow: '0 4px 15px rgba(0, 0, 0, 0.35)' }}>
                   <div className="card-header-row">
                     <h3>Prescription #{prescription.id}</h3>
                     <div className="status-badges">
@@ -453,22 +453,23 @@ const PharmacistInventory = () => {
                       </div>
                     )}
                     
-                    <div className="detail-row" style={{ marginTop: '15px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
+                    <div className="detail-row" style={{ marginTop: '15px', borderTop: '1px solid #2d5f3e', paddingTop: '15px' }}>
                       <span className="label"><strong>Medications:</strong></span>
                     </div>
                     {prescription.medicines && prescription.medicines.map((med, idx) => (
                       <div key={idx} style={{ 
-                        background: '#f8f9fa', 
+                        background: '#133025', 
                         padding: '10px', 
                         marginBottom: '8px', 
-                        borderRadius: '6px',
-                        fontSize: '13px'
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        border: '1px solid #2d5f3e'
                       }}>
-                        <div><strong>{med.medicineName}</strong></div>
-                        <div>Dosage: {med.dosage}</div>
-                        <div>Frequency: {med.frequency}</div>
-                        <div>Duration: {med.durationDays} days</div>
-                        {med.instructions && <div>Notes: {med.instructions}</div>}
+                        <div style={{ color: '#e8f5e9', fontWeight: 700 }}>{med.medicineName}</div>
+                        <div style={{ color: '#a5d6a7' }}>Dosage: {med.dosage}</div>
+                        <div style={{ color: '#a5d6a7' }}>Frequency: {med.frequency}</div>
+                        <div style={{ color: '#a5d6a7' }}>Duration: {med.durationDays} days</div>
+                        {med.instructions && <div style={{ color: '#a5d6a7' }}>Notes: {med.instructions}</div>}
                       </div>
                     ))}
                   </div>

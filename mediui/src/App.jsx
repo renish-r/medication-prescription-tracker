@@ -6,6 +6,7 @@ import LoginPage from './pages/Login';
 import SignupPage from './pages/Signup';
 import ForgotPassword from './components/ForgotPassword';
 import PatientPrescriptions from './pages/patient/PatientPrescriptions';
+import PatientAnalytics from './pages/patient/PatientAnalytics';
 import DoctorPrescriptions from './pages/doctor/DoctorPrescriptions';
 import PatientAdherence from './pages/doctor/PatientAdherence';
 import InventoryPage from './pages/pharmacist/Inventory';
@@ -28,6 +29,7 @@ function Topbar() {
   const linkClass = ({ isActive }) => (isActive ? 'nav-link active' : 'nav-link');
   const roleLinks = [
     { role: 'PATIENT', to: '/patient', label: 'Dashboard' },
+    { role: 'PATIENT', to: '/patient/analytics', label: 'Analytics' },
     { role: 'DOCTOR', to: '/doctor', label: 'Prescriptions' },
     { role: 'DOCTOR', to: '/doctor/adherence', label: 'Patient Adherence' },
     { role: 'PHARMACIST', to: '/pharmacist', label: 'Dashboard' },
@@ -53,7 +55,6 @@ function Topbar() {
         ) : (
           <div className="nav-actions">
             <NavLink to="/login" className={linkClass}>Login</NavLink>
-            <NavLink to="/forgot-password" className={linkClass}>Forgot Password</NavLink>
             <NavLink to="/signup" className="nav-link filled">Sign up</NavLink>
           </div>
         )}
@@ -112,6 +113,7 @@ function App() {
 
           <Route element={<ProtectedRoute roles={['PATIENT']} />}>
             <Route path="/patient" element={<PatientPrescriptions />} />
+            <Route path="/patient/analytics" element={<PatientAnalytics />} />
           </Route>
 
           <Route element={<ProtectedRoute roles={['DOCTOR']} />}>

@@ -35,7 +35,7 @@ You need to set your Supabase database password. Follow these steps:
 Edit `medimanager/.env`:
 
 ```
-SUPABASE_DB_PASSWORD=YOUR_ACTUAL_DATABASE_PASSWORD_HERE
+SPRING_DATASOURCE_PASSWORD=YOUR_ACTUAL_DATABASE_PASSWORD_HERE
 ```
 
 Replace `YOUR_ACTUAL_DATABASE_PASSWORD_HERE` with your actual password.
@@ -49,21 +49,23 @@ The `.env` file is already created. Most IDEs will auto-load it.
 
 On Windows (PowerShell):
 ```powershell
-$env:SUPABASE_URL="https://sqdsxqruqgkfgnvitjub.supabase.co"
-$env:SUPABASE_ANON_KEY="sb_publishable_sg8HQRv0yM9LIJcl17eyTw_UVWuKzs3"
-$env:SUPABASE_DB_URL="jdbc:postgresql://db.sqdsxqruqgkfgnvitjub.supabase.co:5432/postgres"
-$env:SUPABASE_DB_USER="postgres"
-$env:SUPABASE_DB_PASSWORD="your_password_here"
+$env:SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"
+$env:SUPABASE_ANON_KEY="your_anon_key_here"
+$env:SPRING_DATASOURCE_URL="jdbc:postgresql://YOUR_DB_HOST:5432/postgres"
+$env:SPRING_DATASOURCE_USERNAME="postgres"
+$env:SPRING_DATASOURCE_PASSWORD="your_password_here"
 ```
 
 On Linux/Mac (Bash):
 ```bash
-export SUPABASE_URL="https://sqdsxqruqgkfgnvitjub.supabase.co"
-export SUPABASE_ANON_KEY="sb_publishable_sg8HQRv0yM9LIJcl17eyTw_UVWuKzs3"
-export SUPABASE_DB_URL="jdbc:postgresql://db.sqdsxqruqgkfgnvitjub.supabase.co:5432/postgres"
-export SUPABASE_DB_USER="postgres"
-export SUPABASE_DB_PASSWORD="your_password_here"
+export SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"
+export SUPABASE_ANON_KEY="your_anon_key_here"
+export SPRING_DATASOURCE_URL="jdbc:postgresql://YOUR_DB_HOST:5432/postgres"
+export SPRING_DATASOURCE_USERNAME="postgres"
+export SPRING_DATASOURCE_PASSWORD="your_password_here"
 ```
+
+`YOUR_DB_HOST` must be copied from Supabase Database settings (Connection string host). If DNS lookup fails (`UnknownHostException`), verify the host value and do not prepend `db.` unless Supabase explicitly provides it.
 
 ## Running with Supabase
 
@@ -161,8 +163,8 @@ prescription_id (BIGINT) - Foreign Key
 - Check application logs for errors
 
 ### "Authentication failed"
-- Verify `SUPABASE_DB_USER` is `postgres`
-- Check `SUPABASE_DB_PASSWORD` is correct
+- Verify `SPRING_DATASOURCE_USERNAME` is `postgres`
+- Check `SPRING_DATASOURCE_PASSWORD` is correct
 - Ensure database URL is correct
 
 ## File Changes Summary

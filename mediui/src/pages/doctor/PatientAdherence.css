@@ -2,7 +2,7 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0a1f1a 0%, #0d2821 100%);
   min-height: 100vh;
 }
 
@@ -21,20 +21,21 @@
   align-items: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: white;
+  background: #1a3a2e;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  border: 1px solid #2d5f3e;
 }
 
 .dashboard-header h1 {
   margin: 0 0 5px 0;
   font-size: 28px;
-  color: #333;
+  color: #e8f5e9;
 }
 
 .subtitle {
   margin: 0;
-  color: #999;
+  color: #a5d6a7;
   font-size: 14px;
 }
 
@@ -46,22 +47,24 @@
 
 .threshold-control label {
   font-weight: 600;
-  color: #666;
+  color: #e8f5e9;
   font-size: 14px;
 }
 
 .threshold-select {
   padding: 8px 15px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid #2d5f3e;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: border-color 0.3s;
+  background: #0d2821;
+  color: #e8f5e9;
 }
 
 .threshold-select:hover {
-  border-color: #667eea;
+  border-color: #4caf50;
 }
 
 /* Tabs */
@@ -69,7 +72,7 @@
   display: flex;
   gap: 10px;
   margin-bottom: 30px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(26, 58, 46, 0.6);
   padding: 10px;
   border-radius: 10px;
   backdrop-filter: blur(10px);
@@ -79,8 +82,8 @@
   flex: 1;
   padding: 12px 20px;
   border: none;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: rgba(45, 95, 62, 0.4);
+  color: #a5d6a7;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -89,14 +92,14 @@
 }
 
 .tab-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(76, 175, 80, 0.2);
   transform: translateY(-2px);
 }
 
 .tab-btn.active {
-  background: white;
-  color: #667eea;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
 }
 
 /* Tab Content */
@@ -111,10 +114,11 @@
 
 /* Empty State */
 .empty-state {
-  background: white;
+  background: #cfebd5;
   border-radius: 12px;
   padding: 60px 20px;
   text-align: center;
+  border: 1px solid #2d5f3e;
 }
 
 .empty-icon {
@@ -124,13 +128,13 @@
 
 .empty-state h3 {
   margin: 0 0 10px 0;
-  color: #333;
+  color: #1a3a2e;
   font-size: 24px;
 }
 
 .empty-state p {
   margin: 0;
-  color: #999;
+  color: #2d5f3e;
   font-size: 16px;
 }
 
@@ -142,17 +146,19 @@
 }
 
 .patient-alert-card {
-  background: white;
+  background: #1a3a2e;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
   cursor: pointer;
   transition: all 0.3s ease;
+  border: 1px solid #2d5f3e;
 }
 
 .patient-alert-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 25px rgba(46, 125, 50, 0.3);
+  border-color: #4caf50;
 }
 
 .alert-header {
@@ -161,7 +167,7 @@
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #2d5f3e;
 }
 
 .patient-info {
@@ -180,17 +186,18 @@
   color: white;
   font-size: 24px;
   font-weight: 700;
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
 }
 
 .patient-info h3 {
   margin: 0 0 5px 0;
   font-size: 18px;
-  color: #333;
+  color: #e8f5e9;
 }
 
 .patient-email {
   margin: 0;
-  color: #999;
+  color: #a5d6a7;
   font-size: 13px;
 }
 
@@ -208,7 +215,7 @@
 .adherence-circle .percentage {
   font-size: 20px;
   font-weight: 700;
-  color: #333;
+  color: #e8f5e9;
   line-height: 1;
 }
 
@@ -233,14 +240,14 @@
 
 .detail-label {
   font-size: 12px;
-  color: #999;
+  color: #a5d6a7;
   font-weight: 600;
 }
 
 .detail-value {
   font-size: 20px;
   font-weight: 700;
-  color: #333;
+  color: #e8f5e9;
 }
 
 .status-badge {
@@ -251,22 +258,24 @@
 }
 
 .status-badge.warning {
-  background: #fff3cd;
-  color: #856404;
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffca28;
+  border: 1px solid rgba(255, 193, 7, 0.35);
 }
 
 .medications-preview {
   margin: 15px 0;
   padding: 15px;
-  background: #f8f9fa;
+  background: #133025;
   border-radius: 8px;
+  border: 1px solid #2d5f3e;
 }
 
 .medications-preview strong {
   display: block;
   margin-bottom: 10px;
   font-size: 13px;
-  color: #666;
+  color: #e8f5e9;
 }
 
 .medications-preview ul {
@@ -277,38 +286,40 @@
 
 .medications-preview li {
   padding: 5px 0;
-  color: #333;
+  color: #a5d6a7;
   font-size: 14px;
 }
 
 .medications-preview li.more {
-  color: #667eea;
+  color: #81c784;
   font-weight: 600;
 }
 
 .view-details-btn {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
   color: white;
   border: none;
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: opacity 0.3s;
+  transition: all 0.3s;
 }
 
 .view-details-btn:hover {
   opacity: 0.9;
+  transform: translateY(-2px);
 }
 
 /* Patients Table */
 .patients-table {
-  background: white;
+  background: #0f241c;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+  border: 1px solid #2d5f3e;
 }
 
 .patients-table table {
@@ -317,21 +328,21 @@
 }
 
 .patients-table th {
-  background: #f8f9fa;
+  background: rgba(26, 58, 46, 0.8);
   padding: 15px;
   text-align: left;
   font-size: 13px;
   font-weight: 700;
-  color: #666;
+  color: #e8f5e9;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .patients-table td {
   padding: 15px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #2d5f3e;
   font-size: 14px;
-  color: #333;
+  color: #e8f5e9;
 }
 
 .patients-table td.centered {
@@ -348,7 +359,7 @@
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background: #667eea;
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
   color: white;
   display: flex;
   align-items: center;
@@ -393,30 +404,32 @@
 
 .action-btn {
   padding: 8px 16px;
-  background: #667eea;
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
   color: white;
   border: none;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s;
 }
 
 .action-btn:hover {
-  background: #5568d3;
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
 /* Patient Details View */
 .patient-details-view {
-  background: white;
+  background: #1a3a2e;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  border: 1px solid #2d5f3e;
 }
 
 .details-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
   padding: 30px;
   display: flex;
   justify-content: space-between;
@@ -509,19 +522,20 @@
 }
 
 .details-section {
-  background: #f8f9fa;
+  background: #0d2821;
   padding: 20px;
   border-radius: 8px;
+  border: 1px solid #2d5f3e;
 }
 
 .details-section h3 {
   margin: 0 0 20px 0;
   font-size: 18px;
-  color: #333;
+  color: #e8f5e9;
 }
 
 .empty-message {
-  color: #999;
+  color: #a5d6a7;
   text-align: center;
   padding: 40px 20px;
   font-size: 14px;
@@ -535,28 +549,29 @@
 }
 
 .schedule-item {
-  background: white;
+  background: #1a3a2e;
   padding: 15px;
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border: 1px solid #2d5f3e;
 }
 
 .schedule-info h4 {
   margin: 0 0 8px 0;
   font-size: 16px;
-  color: #333;
+  color: #e8f5e9;
 }
 
 .schedule-info p {
   margin: 5px 0;
   font-size: 13px;
-  color: #666;
+  color: #a5d6a7;
 }
 
 .schedule-dates {
-  color: #999;
+  color: #81c784;
   font-size: 12px;
 }
 
@@ -568,13 +583,15 @@
 }
 
 .schedule-status.active {
-  background: #d4edda;
-  color: #155724;
+  background: rgba(76, 175, 80, 0.2);
+  color: #81c784;
+  border: 1px solid #4caf50;
 }
 
 .schedule-status.inactive {
-  background: #f8d7da;
-  color: #721c24;
+  background: rgba(211, 47, 47, 0.2);
+  color: #ef5350;
+  border: 1px solid #c62828;
 }
 
 .dose-log-item {
@@ -631,17 +648,19 @@
 }
 
 .log-badge.taken {
-  background: #d4edda;
-  color: #155724;
+  background: rgba(76, 175, 80, 0.2);
+  color: #81c784;
+  border: 1px solid #4caf50;
 }
 
 .log-badge.missed {
-  background: #f8d7da;
-  color: #721c24;
+  background: rgba(211, 47, 47, 0.2);
+  color: #ef5350;
+  border: 1px solid #c62828;
 }
 
 .error-message {
-  background: #f44336;
+  background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
   color: white;
   padding: 15px 20px;
   border-radius: 8px;

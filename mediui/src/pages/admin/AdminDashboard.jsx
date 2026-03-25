@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { apiFetch } from '../../api/client';
-import { useAuth } from '../../context/AuthContext';
+import { apiClient } from '../../api/client';
 
 const baseStats = { users: 0, prescriptions: 0, doctors: 0, patients: 0 };
 
@@ -16,7 +15,6 @@ function Stat({ label, value, onClick }) {
 }
 
 export default function AdminDashboard() {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState(baseStats);
   const [recent, setRecent] = useState([]);
@@ -29,8 +27,8 @@ export default function AdminDashboard() {
       setLoading(true);
       try {
         const [summary, prescriptions] = await Promise.all([
-          apiFetch('/admin/summary', { token: user?.token }),
-          apiFetch('/admin/prescriptions', { token: user?.token }),
+          apiClient.get('/admin/summary'),
+          apiClient.get('/admin/prescriptions'),
         ]);
         setStats({ ...baseStats, ...summary });
         setRecent(Array.isArray(prescriptions) ? prescriptions.slice(0, 8) : []);
@@ -41,7 +39,7 @@ export default function AdminDashboard() {
       }
     };
     load();
-  }, [user]);
+  }, []);
 
   return (
     <div className="stack">

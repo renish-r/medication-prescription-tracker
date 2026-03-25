@@ -114,7 +114,7 @@ export default function PatientPrescriptions() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: '#f5f5f5',
+            backgroundColor: '#0a1f1a',
           zIndex: 1999,
           overflowY: 'auto',
           paddingBottom: '20px',
@@ -125,8 +125,8 @@ export default function PatientPrescriptions() {
               <button
                 onClick={() => setShowTracker(false)}
                 style={{
-                  background: 'white',
-                  color: '#2196f3',
+                  background: 'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)',
+                  color: '#e8f5e9',
                   border: 'none',
                   padding: '10px 20px',
                   borderRadius: '6px',
@@ -151,13 +151,13 @@ export default function PatientPrescriptions() {
       {/* Main Content */}
       <div className="stack">
         {/* Medication Tracker Reminder Button */}
-        <div className="card" style={{ backgroundColor: '#e3f2fd', borderLeft: '4px solid #2196f3' }}>
+          <div className="card" style={{ backgroundColor: '#1a3a2e', borderLeft: '4px solid #4caf50', border: '1px solid #2d5f3e' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ fontSize: '24px' }}>💊</span>
               <div>
-                <h3 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>Medication Reminders</h3>
-                <p className="muted" style={{ margin: '0', fontSize: '13px' }}>Track your daily medication schedule</p>
+                 <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', color: '#e8f5e9' }}>Medication Reminders</h3>
+                 <p style={{ margin: '0', fontSize: '13px', color: '#a5d6a7' }}>Track your daily medication schedule</p>
               </div>
             </div>
             <button 
@@ -270,13 +270,13 @@ export default function PatientPrescriptions() {
               </button>
             </div>
 
-            <div style={{ padding: '16px' }}>
+            <div style={{ padding: '16px', backgroundColor: '#0f241c', color: '#e8f5e9' }}>
               {/* Header Info */}
-              <div style={{ marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #eee' }}>
+              <div style={{ marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #2d5f3e' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                   <div>
-                    <h3 style={{ margin: '0 0 4px 0' }}>{selectedPrescription.diagnosis || 'Prescription'}</h3>
-                    <p className="muted">Issued: {new Date(selectedPrescription.issuedDate).toLocaleDateString()}</p>
+                    <h3 style={{ margin: '0 0 4px 0', color: '#e8f5e9' }}>{selectedPrescription.diagnosis || 'Prescription'}</h3>
+                    <p style={{ color: '#a5d6a7' }}>Issued: {new Date(selectedPrescription.issuedDate).toLocaleDateString()}</p>
                   </div>
                   <div 
                     className="pill"
@@ -295,14 +295,14 @@ export default function PatientPrescriptions() {
 
               {/* Doctor Info */}
               <div style={{ marginBottom: '20px' }}>
-                <p style={{ margin: '0 0 8px 0', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase', color: '#666' }}>
+                <p style={{ margin: '0 0 8px 0', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase', color: '#81c784', letterSpacing: '0.5px' }}>
                   Prescribed By
                 </p>
-                <div style={{ backgroundColor: '#f9f9f9', padding: '12px', borderRadius: '6px' }}>
-                  <p style={{ margin: '0 0 4px 0', fontWeight: '600' }}>
+                <div style={{ backgroundColor: '#133025', padding: '12px', borderRadius: '8px', border: '1px solid #2d5f3e' }}>
+                  <p style={{ margin: '0 0 4px 0', fontWeight: '600', color: '#e8f5e9' }}>
                     Dr. {selectedPrescription.doctorName || 'Doctor'}
                   </p>
-                  <p style={{ margin: '0', fontSize: '13px', color: '#666' }}>
+                  <p style={{ margin: '0', fontSize: '13px', color: '#a5d6a7' }}>
                     {selectedPrescription.doctorEmail}
                   </p>
                 </div>
@@ -310,22 +310,22 @@ export default function PatientPrescriptions() {
 
               {/* Timeline */}
               <div style={{ marginBottom: '20px' }}>
-                <p style={{ margin: '0 0 8px 0', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase', color: '#666' }}>
+                <p style={{ margin: '0 0 8px 0', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase', color: '#81c784', letterSpacing: '0.5px' }}>
                   Validity
                 </p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div style={{ backgroundColor: '#f9f9f9', padding: '12px', borderRadius: '6px' }}>
-                    <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>Issued</p>
-                    <p style={{ margin: '4px 0 0 0', fontWeight: '600' }}>
+                  <div style={{ backgroundColor: '#133025', padding: '12px', borderRadius: '8px', border: '1px solid #2d5f3e' }}>
+                    <p style={{ margin: '0', fontSize: '12px', color: '#a5d6a7' }}>Issued</p>
+                    <p style={{ margin: '4px 0 0 0', fontWeight: '600', color: '#e8f5e9' }}>
                       {new Date(selectedPrescription.issuedDate).toLocaleDateString()}
                     </p>
                   </div>
-                  <div style={{ backgroundColor: '#f9f9f9', padding: '12px', borderRadius: '6px' }}>
-                    <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>Expires</p>
+                  <div style={{ backgroundColor: '#133025', padding: '12px', borderRadius: '8px', border: '1px solid #2d5f3e' }}>
+                    <p style={{ margin: '0', fontSize: '12px', color: '#a5d6a7' }}>Expires</p>
                     <p style={{ 
                       margin: '4px 0 0 0', 
                       fontWeight: '600',
-                      color: new Date(selectedPrescription.expiryDate) < new Date() ? '#c62828' : '#2e7d32'
+                      color: new Date(selectedPrescription.expiryDate) < new Date() ? '#ef5350' : '#66bb6a'
                     }}>
                       {new Date(selectedPrescription.expiryDate).toLocaleDateString()}
                     </p>
@@ -335,7 +335,7 @@ export default function PatientPrescriptions() {
 
               {/* Medicines */}
               <div>
-                <p style={{ margin: '0 0 12px 0', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase', color: '#666' }}>
+                <p style={{ margin: '0 0 12px 0', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase', color: '#81c784', letterSpacing: '0.5px' }}>
                   Medicines ({selectedPrescription.medicines?.length || 0})
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -343,16 +343,17 @@ export default function PatientPrescriptions() {
                     <div 
                       key={m.id}
                       style={{
-                        backgroundColor: '#f9f9f9',
+                        backgroundColor: '#133025',
                         padding: '12px',
-                        borderRadius: '6px',
-                        borderLeft: '3px solid #2196f3',
+                        borderRadius: '8px',
+                        borderLeft: '3px solid #4caf50',
+                        border: '1px solid #2d5f3e',
                       }}
                     >
-                      <p style={{ margin: '0 0 6px 0', fontWeight: '600' }}>
+                      <p style={{ margin: '0 0 6px 0', fontWeight: '600', color: '#e8f5e9' }}>
                         {m.medicineName}
                       </p>
-                      <div style={{ fontSize: '13px', color: '#555', lineHeight: '1.6' }}>
+                      <div style={{ fontSize: '13px', color: '#a5d6a7', lineHeight: '1.6' }}>
                         <p style={{ margin: '0' }}>
                           <strong>Dosage:</strong> {m.dosage}
                         </p>

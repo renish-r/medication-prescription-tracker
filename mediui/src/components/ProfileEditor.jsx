@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { apiFetch } from '../api/client';
+import { apiClient } from '../api/client';
 import './ProfileEditor.css';
 
 export default function ProfileEditor() {
@@ -19,24 +19,7 @@ export default function ProfileEditor() {
 
   const loadProfile = async () => {
     try {
-      // Get token from AuthContext storage
-      const authData = localStorage.getItem('medimanager_auth');
-      if (!authData) {
-        setMessage('No authentication token found. Please login again.');
-        setIsLoading(false);
-        return;
-      }
-
-      const { token } = JSON.parse(authData);
-      if (!token) {
-        setMessage('No authentication token found. Please login again.');
-        setIsLoading(false);
-        return;
-      }
-
-      const data = await apiFetch('/profile', {
-        token,
-      });
+      const data = await apiClient.get('/profile');
       
       // Handle the API response structure
       if (data && data.userId) {

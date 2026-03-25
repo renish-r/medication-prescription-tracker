@@ -27,6 +27,8 @@ const PatientAdherence = () => {
         token: user?.token 
       });
       
+      console.log('Low adherence alerts response:', data);
+      
       // Group schedules by patient
       const patientMap = {};
       (Array.isArray(data) ? data : []).forEach(schedule => {
@@ -48,12 +50,13 @@ const PatientAdherence = () => {
         Object.values(patientMap).map(async (item) => {
           try {
             const adherenceData = await apiFetch(
-              `/patient/schedules/adherence/patient/${item.patient.id}`, 
+              `/doctor/patients/${item.patient.id}/adherence`,
               { token: user?.token }
             );
+            console.log(`Adherence for patient ${item.patient.id}:`, adherenceData);
             return {
               ...item,
-              adherence: adherenceData.adherence || 0
+              adherence: adherenceData.adherencePercentage || 0
             };
           } catch (err) {
             return { ...item, adherence: 0 };
@@ -64,7 +67,14 @@ const PatientAdherence = () => {
       setLowAdherencePatients(patients.sort((a, b) => a.adherence - b.adherence));
       setError(null);
     } catch (err) {
-      setError(err.message);
+      // If the doctor token is missing/expired, avoid noisy console and just clear alerts
+      if ((err?.message || '').toLowerCase().includes('forbidden')) {
+        console.warn('Low adherence alerts request forbidden; skipping alerts list.');
+        setLowAdherencePatients([]);
+        setError(null);
+      } else {
+        setError(err.message);
+      }
       console.error('Error fetching low adherence patients:', err);
     } finally {
       setLoading(false);
@@ -98,12 +108,13 @@ const PatientAdherence = () => {
         Object.values(patientMap).map(async (patient) => {
           try {
             const adherenceData = await apiFetch(
-              `/patient/schedules/adherence/patient/${patient.id}`, 
+              `/doctor/patients/${patient.id}/adherence`,
               { token: user?.token }
             );
+            console.log(`All patients - Adherence for patient ${patient.id}:`, adherenceData);
             return {
               ...patient,
-              adherence: adherenceData.adherence || 0,
+              adherence: adherenceData.adherencePercentage || 0,
               scheduleCount: adherenceData.scheduleCount || 0
             };
           } catch (err) {
@@ -120,7 +131,22 @@ const PatientAdherence = () => {
 
   const viewPatientDetails = async (patient) => {
     try {
-      setSelectedPatient(patient);
+      // Refresh adherence for this patient so the detail view shows current value
+      let refreshedPatient = patient;
+      try {
+        const adherenceData = await apiFetch(
+          `/doctor/patients/${patient.id}/adherence`,
+          { token: user?.token }
+        );
+        refreshedPatient = {
+          ...patient,
+          adherence: adherenceData.adherencePercentage || 0,
+        };
+      } catch (err) {
+        // Keep existing adherence if refresh fails
+      }
+
+      setSelectedPatient(refreshedPatient);
       setActiveView('details');
       
       // Fetch patient's medication schedules
@@ -133,7 +159,18 @@ const PatientAdherence = () => {
       const logs = await apiFetch(`/doctor/patients/${patient.id}/dose-logs`, { 
         token: user?.token 
       });
-      setPatientDoseLogs(Array.isArray(logs) ? logs : []);
+      const doseLogs = Array.isArray(logs) ? logs : [];
+      setPatientDoseLogs(doseLogs);
+
+      // Fallback: if backend adherence still 0 but logs exist, compute locally so doctor sees the real value
+      try {
+        if (refreshedPatient.adherence === 0 && doseLogs.length > 0) {
+          const total = doseLogs.length;
+          const taken = doseLogs.filter(l => (l.status || '').toUpperCase() === 'TAKEN').length;
+          const computedAdherence = total > 0 ? Math.round((taken * 10000) / total) / 100 : 0;
+          setSelectedPatient({ ...refreshedPatient, adherence: computedAdherence });
+        }
+      } catch (_) {}
     } catch (err) {
       console.error('Error fetching patient details:', err);
       setError('Failed to load patient details. Using patient schedules endpoint instead.');

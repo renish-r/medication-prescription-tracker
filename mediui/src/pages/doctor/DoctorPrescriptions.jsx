@@ -1,8 +1,63 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const emptyMed = { name: '', dosage: '', timing: '', duration: '', notes: '' };
+
+const COMMON_DIAGNOSES = [
+  'Hypertension',
+  'Type 2 Diabetes',
+  'Type 1 Diabetes',
+  'Asthma',
+  'COPD',
+  'Heart Failure',
+  'Coronary Artery Disease',
+  'Atrial Fibrillation',
+  'Hypercholesterolemia',
+  'Obesity',
+  'Depression',
+  'Anxiety Disorder',
+  'Migraine',
+  'Tension Headache',
+  'Arthritis',
+  'Osteoporosis',
+  'Thyroid Disease',
+  'Gastroesophageal Reflux',
+  'Irritable Bowel Syndrome',
+  'Chronic Kidney Disease',
+  'Urinary Tract Infection',
+  'Bacterial Infection',
+  'Viral Infection',
+  'Common Cold',
+  'Influenza',
+  'Allergic Rhinitis',
+  'Skin Infection',
+  'Eczema',
+  'Psoriasis',
+  'Acne',
+  'Anemia',
+  'Pneumonia',
+  'Bronchitis',
+  'Sinusitis',
+  'Otitis Media',
+  'Conjunctivitis',
+  'Cataracts',
+  'Glaucoma',
+  'Diabetic Neuropathy',
+  'Peripheral Vascular Disease',
+  'Sleep Apnea',
+  'Insomnia',
+  'Vertigo',
+  'High Blood Pressure Crisis',
+  'Acute Chest Pain',
+  'Gastritis',
+  'Constipation',
+  'Diarrhea',
+  'Hemorrhoids',
+  'Gout',
+  'Fibromyalgia',
+];
 
 const COMMON_MEDICINES = [
   'Paracetamol 500mg',
@@ -68,10 +123,17 @@ const getDosageOptions = (medicineName) => {
 };
 
 export default function DoctorPrescriptions() {
+  const todayDate = new Date().toISOString().split('T')[0];
   const { user } = useAuth();
   const [list, setList] = useState([]);
   const [patients, setPatients] = useState([]);
-  const [form, setForm] = useState({ patientId: '', diagnosis: '', expiryDate: '', medications: [emptyMed] });
+  const [form, setForm] = useState({ 
+    patientId: '', 
+    diagnosis: '', 
+    prescriptionDate: todayDate,
+    expiryDate: todayDate,
+    medications: [emptyMed] 
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [patientForm, setPatientForm] = useState({ name: '', email: '', password: '', age: '', gender: '' });
@@ -115,6 +177,11 @@ export default function DoctorPrescriptions() {
     e.preventDefault();
     setLoading(true);
     setError('');
+    if (!form.expiryDate || form.expiryDate < getMinDate() || form.expiryDate > getMaxDate()) {
+      setError('Expiry date must be today or up to one year from today.');
+      setLoading(false);
+      return;
+    }
     try {
       await apiFetch('/doctor/prescriptions/create', {
         method: 'POST',
@@ -122,11 +189,12 @@ export default function DoctorPrescriptions() {
         body: {
           patientId: Number(form.patientId),
           diagnosis: form.diagnosis,
+          prescriptionDate: form.prescriptionDate,
           expiryDate: form.expiryDate || null,
           medications: form.medications,
         },
       });
-      setForm({ patientId: '', diagnosis: '', expiryDate: '', medications: [emptyMed] });
+      setForm({ patientId: '', diagnosis: '', prescriptionDate: todayDate, expiryDate: todayDate, medications: [emptyMed] });
       load();
     } catch (err) {
       setError(err.message);
@@ -138,6 +206,59 @@ export default function DoctorPrescriptions() {
   const getMinDate = () => {
     const today = new Date();
     return today.toISOString().split('T')[0];
+  };
+
+  const getMaxDate = () => {
+    const today = new Date();
+    const nextYear = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
+    return nextYear.toISOString().split('T')[0];
+  };
+
+  const isExpired = (expiryDate) => {
+    if (!expiryDate) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const expiry = new Date(expiryDate);
+    expiry.setHours(0, 0, 0, 0);
+    return expiry < today;
+  };
+
+  const correctDateInput = (dateStr) => {
+    if (!dateStr) return dateStr;
+    
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    
+    let [year, month, day] = parts.map(Number);
+    const currentYear = new Date().getFullYear();
+    const today = new Date();
+    const maxDate = new Date(currentYear + 1, today.getMonth(), today.getDate());
+    
+    // Auto-correct month 00 to 01
+    if (month === 0) month = 1;
+    
+    // Auto-correct day 00 to 01
+    if (day === 0) day = 1;
+    
+    // Auto-correct year if below current year
+    if (year < currentYear) year = currentYear;
+    
+    // Clamp the date to max allowed (one year from today)
+    const correctedDateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    if (correctedDateStr > getMaxDate()) {
+      return getMaxDate();
+    }
+    
+    return correctedDateStr;
+  };
+
+  const handleExpiryDateChange = (value) => {
+    // If date exceeds max, auto-correct to max
+    if (value && value > getMaxDate()) {
+      setForm({ ...form, expiryDate: getMaxDate() });
+    } else {
+      setForm({ ...form, expiryDate: value });
+    }
   };
 
   const createPatient = async (e) => {
@@ -209,7 +330,8 @@ export default function DoctorPrescriptions() {
     setForm({
       patientId: prescription.patient?.id || '',
       diagnosis: prescription.diagnosis || '',
-      expiryDate: prescription.expiryDate || '',
+      prescriptionDate: todayDate,
+      expiryDate: prescription.expiryDate || todayDate,
       medications: prescription.medicines ? prescription.medicines.map(m => ({
         name: m.medicineName,
         dosage: m.dosage,
@@ -222,7 +344,7 @@ export default function DoctorPrescriptions() {
 
   const cancelEdit = () => {
     setEditingPrescription(null);
-    setForm({ patientId: '', diagnosis: '', expiryDate: '', medications: [emptyMed] });
+    setForm({ patientId: '', diagnosis: '', prescriptionDate: todayDate, expiryDate: todayDate, medications: [emptyMed] });
     setError('');
   };
 
@@ -230,6 +352,11 @@ export default function DoctorPrescriptions() {
     e.preventDefault();
     setLoading(true);
     setError('');
+    if (!form.expiryDate || form.expiryDate < getMinDate() || form.expiryDate > getMaxDate()) {
+      setError('Expiry date must be today or up to one year from today.');
+      setLoading(false);
+      return;
+    }
     try {
       await apiFetch(`/doctor/prescriptions/${editingPrescription.id}`, {
         method: 'PUT',
@@ -282,11 +409,11 @@ export default function DoctorPrescriptions() {
             <p className="muted">Create a patient account to prescribe to</p>
           </div>
         </div>
-        <form className="form" onSubmit={createPatient}>
-          <input name="name" placeholder="Full name" value={patientForm.name} onChange={(e) => setPatientForm({ ...patientForm, name: e.target.value })} required />
-          <input name="email" type="email" placeholder="Email" value={patientForm.email} onChange={(e) => setPatientForm({ ...patientForm, email: e.target.value })} required />
-          <input name="password" type="password" placeholder="Temporary password" value={patientForm.password} onChange={(e) => setPatientForm({ ...patientForm, password: e.target.value })} required />
-          <input name="age" type="number" placeholder="Age" value={patientForm.age} onChange={(e) => setPatientForm({ ...patientForm, age: e.target.value })} required />
+        <form className="form" onSubmit={createPatient} autoComplete="off">
+          <input name="name" autoComplete="off" placeholder="Full name" value={patientForm.name} onChange={(e) => setPatientForm({ ...patientForm, name: e.target.value })} required />
+          <input name="email" type="email" autoComplete="off" placeholder="Email" value={patientForm.email} onChange={(e) => setPatientForm({ ...patientForm, email: e.target.value })} required />
+          <input name="password" type="password" autoComplete="new-password" placeholder="Temporary password" value={patientForm.password} onChange={(e) => setPatientForm({ ...patientForm, password: e.target.value })} required />
+          <input name="age" type="number" autoComplete="off" placeholder="Age" value={patientForm.age} onChange={(e) => setPatientForm({ ...patientForm, age: e.target.value })} required />
           <select name="gender" value={patientForm.gender} onChange={(e) => setPatientForm({ ...patientForm, gender: e.target.value })} required>
             <option value="">Select gender</option>
             <option value="FEMALE">Female</option>
@@ -316,13 +443,53 @@ export default function DoctorPrescriptions() {
               </option>
             ))}
           </select>
-          <input name="diagnosis" placeholder="Diagnosis" value={form.diagnosis} onChange={(e) => setForm({ ...form, diagnosis: e.target.value })} required />
-          <input name="expiryDate" type="date" value={form.expiryDate} onChange={(e) => setForm({ ...form, expiryDate: e.target.value })} min={getMinDate()} required />
+          <input 
+            list="diagnosis-list"
+            name="diagnosis" 
+            placeholder="Search diagnosis (type to filter)" 
+            value={form.diagnosis} 
+            onChange={(e) => setForm({ ...form, diagnosis: e.target.value })} 
+            required 
+          />
+          <datalist id="diagnosis-list">
+            {COMMON_DIAGNOSES.map((diag, idx) => (
+              <option key={idx} value={diag} />
+            ))}
+          </datalist>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', color: '#a5d6a7', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '600' }}>Prescription Date (Today)</label>
+              <input 
+                name="prescriptionDate" 
+                type="date" 
+                value={form.prescriptionDate} 
+                disabled 
+                style={{ background: '#0d2821', color: '#7fb8a0', cursor: 'not-allowed', opacity: 0.7 }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', color: '#a5d6a7', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '600' }}>Expiry Date</label>
+              <input 
+                name="expiryDate" 
+                type="date" 
+                value={form.expiryDate} 
+                onChange={(e) => handleExpiryDateChange(e.target.value)} 
+                onBlur={(e) => {
+                  const corrected = correctDateInput(e.target.value);
+                  setForm({ ...form, expiryDate: corrected });
+                }}
+                min={getMinDate()} 
+                max={getMaxDate()}
+                required 
+              />
+            </div>
+          </div>
 
           <div className="section">
             <div className="section-header">
               <h3>Medicines</h3>
-              <button type="button" onClick={addMed} className="secondary">Add medicine</button>
+              <button type="button" onClick={addMed} className="secondary" style={{ marginTop: "0px" }}>Add medicine +</button>
             </div>
             {form.medications.map((m, idx) => {
               const { formLabel, options } = getDosageOptions(m.name);
@@ -431,8 +598,20 @@ export default function DoctorPrescriptions() {
                 <option key={p.id} value={p.id}>{p.name} ({p.email})</option>
               ))}
             </select>
-            <input name="diagnosis" placeholder="Diagnosis" value={form.diagnosis} onChange={(e) => setForm({ ...form, diagnosis: e.target.value })} required />
-            <input name="expiryDate" type="date" value={form.expiryDate} onChange={(e) => setForm({ ...form, expiryDate: e.target.value })} />
+            <input 
+              list="diagnosis-list-edit"
+              name="diagnosis" 
+              placeholder="Search diagnosis (type to filter)" 
+              value={form.diagnosis} 
+              onChange={(e) => setForm({ ...form, diagnosis: e.target.value })} 
+              required 
+            />
+            <datalist id="diagnosis-list-edit">
+              {COMMON_DIAGNOSES.map((diag, idx) => (
+                <option key={idx} value={diag} />
+              ))}
+            </datalist>
+            <input name="expiryDate" type="date" value={form.expiryDate} onChange={(e) => handleExpiryDateChange(e.target.value)} onBlur={(e) => { const corrected = correctDateInput(e.target.value); setForm({ ...form, expiryDate: corrected }); }} min={getMinDate()} max={getMaxDate()} required />
             
             <h3>Medicines</h3>
             <button type="button" onClick={addMed} className="secondary">Add medicine</button>
@@ -529,8 +708,21 @@ export default function DoctorPrescriptions() {
                   <div className="title">{p.diagnosis || 'Prescription'}</div>
                   <div className="muted">Patient: {p.patient?.email}</div>
                   <div className="muted">Status: {p.status}</div>
+                  <div className="muted">Issued: {p.issuedDate}</div>
+                  {p.expiryDate && (
+                    <div style={{
+                      marginTop: '8px',
+                      padding: '6px 10px',
+                      borderRadius: '4px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      background: isExpired(p.expiryDate) ? 'rgba(211, 47, 47, 0.2)' : 'rgba(76, 175, 80, 0.2)',
+                      color: isExpired(p.expiryDate) ? '#ef5350' : '#66bb6a'
+                    }}>
+                      {isExpired(p.expiryDate) ? '🚫 EXPIRED' : `✓ Expires: ${p.expiryDate}`}
+                    </div>
+                  )}
                 </div>
-                <div className="muted">Issued: {p.issuedDate}</div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <button className="secondary" onClick={() => renew(p.id)}>Renew</button>
                   <button className="secondary" onClick={() => startEdit(p)}>Edit</button>
@@ -545,33 +737,26 @@ export default function DoctorPrescriptions() {
       </div>
 
       {deleteModal.open && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: 'white',
-            padding: '30px',
-            borderRadius: '10px',
-            maxWidth: '400px',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
-          }}>
-            <h3 style={{ margin: '0 0 10px 0' }}>Delete Prescription</h3>
-            <p style={{ color: '#666', marginBottom: '20px' }}>{deleteModal.diagnosis || 'Prescription'}</p>
-            <p style={{ color: '#d32f2f', background: '#ffebee', padding: '10px', borderRadius: '6px', marginBottom: '20px' }}>
-              This action cannot be undone.
-            </p>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button onClick={closeDeleteModal} style={{ padding: '8px 16px', background: '#f0f0f0', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
-              <button onClick={confirmDelete} style={{ padding: '8px 16px', background: '#d32f2f', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
+        <ConfirmDialog
+          isOpen={deleteModal.open}
+          title="Delete Prescription"
+          message={
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <div style={{ fontSize: '13px', color: '#a5d6a7', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Diagnosis</div>
+                <div style={{ fontSize: '16px', fontWeight: '600', color: '#e8f5e9' }}>{deleteModal.diagnosis || 'Untitled Prescription'}</div>
+              </div>
+              <div style={{ padding: '12px', background: 'rgba(211, 47, 47, 0.15)', border: '1px solid rgba(211, 47, 47, 0.3)', borderRadius: '8px', color: '#ef5350', fontSize: '14px', fontWeight: '500' }}>
+                ⚠️ This action cannot be undone.
+              </div>
             </div>
-          </div>
-        </div>
+          }
+          confirmLabel="Delete Prescription"
+          cancelLabel="Cancel"
+          onConfirm={confirmDelete}
+          onCancel={closeDeleteModal}
+          isDangerous={true}
+        />
       )}
     </div>
   );

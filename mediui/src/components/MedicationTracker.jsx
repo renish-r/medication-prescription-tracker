@@ -24,6 +24,7 @@ const MedicationTracker = () => {
   const [activeTab, setActiveTab] = useState('today'); // today, all, history
   const [loggingDoseId, setLoggingDoseId] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [hideTaken, setHideTaken] = useState(false);
 
   // Fetch patient's medication schedules
   useEffect(() => {
@@ -98,7 +99,7 @@ const MedicationTracker = () => {
       await apiFetch(`/patient/schedules/${scheduleId}/log-dose`, {
         method: 'POST',
         token: user?.token,
-        body: JSON.stringify({ status })
+        body: { status }
       });
 
       setSuccessMessage(`✓ Dose logged as ${status}`);
@@ -107,6 +108,19 @@ const MedicationTracker = () => {
       // Refresh data
       await Promise.all([fetchDoseLogs(), calculateAdherence()]);
       filterTodaysMeds(allSchedules);
+
+      // Notify other views (e.g., analytics) to refresh
+      try {
+        window.dispatchEvent(
+          new CustomEvent('doseLogged', {
+            detail: { scheduleId, status, at: new Date().toISOString() },
+          })
+        );
+        // Cross-tab/session fallback: update a storage key to trigger 'storage' listeners
+        try {
+          localStorage.setItem('doseLoggedStamp', String(Date.now()));
+        } catch (_) {}
+      } catch (_) {}
     } catch (err) {
       setError(`Failed to log dose: ${err.message}`);
       setTimeout(() => setError(null), 3000);
@@ -179,6 +193,14 @@ const MedicationTracker = () => {
             <span className="adherence-value">{adherence.toFixed(1)}%</span>
             <span className="adherence-label">Adherence</span>
           </div>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#a5d6a7' }}>
+            <input
+              type="checkbox"
+              checked={hideTaken}
+              onChange={(e) => setHideTaken(e.target.checked)}
+            />
+            Hide Taken
+          </label>
           <button className="btn-add-medication" onClick={() => setShowAddModal(true)}>
             + Add Medication
           </button>
@@ -218,7 +240,10 @@ const MedicationTracker = () => {
             </div>
           ) : (
             <div className="medications-list">
-              {todaysMeds.map(med => {
+              {todaysMeds.filter(med => {
+                const status = getMedicationStatus(med);
+                return !(hideTaken && status === 'TAKEN');
+              }).map(med => {
                 const status = getMedicationStatus(med);
                 const timeColor = getTimeColor(med.timeOfDay);
                 const timeLabel = getTimeLabel(med.timeOfDay);

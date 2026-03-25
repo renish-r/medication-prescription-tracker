@@ -23,16 +23,16 @@
   margin-bottom: 30px;
   padding: 20px;
   padding-bottom: 20px;
-  border-bottom: 2px solid #eee;
+  border-bottom: 2px solid #2d5f3e;
   flex-wrap: wrap;
   gap: 15px;
-  background: white;
+  background: #1a3a2e;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .tracker-header h1 {
-  color: #1e293b;
+  color: #e8f5e9;
   margin: 0;
   font-size: 32px;
   font-weight: 700;
@@ -128,7 +128,7 @@
   flex-direction: row;
   gap: 10px;
   margin-bottom: 30px;
-  background: #2196f3;
+  background: #37ad31;
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -140,9 +140,9 @@
   flex: 1;
   min-width: 0;
   padding: 15px 10px;
-  border: 2px solid #ddd;
-  background: #ab3d3d;
-  color: #1e293b;
+  border: 2px solid #2d5f3e;
+  background: #1a3a2e;
+  color: #e8f5e9;
   border-radius: 6px;
   font-size: 14px;
   font-weight: 600;
@@ -153,10 +153,10 @@
 }
 
 .tab-btn.active {
-  background: #2196f3;
+  background: #2e7d32;
   color: white;
-  border-color: #2196f3;
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+  border-color: #4caf50;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
 }
 
 /* Tab Content */
@@ -187,10 +187,11 @@
   display: flex;
   align-items: stretch;
   gap: 15px;
-  background: white;
+  background: #1a3a2e;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #2d5f3e;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -243,28 +244,28 @@
   margin: 0 0 8px 0;
   font-size: 18px;
   font-weight: 700;
-  color: #1e293b;
+  color: #e8f5e9;
 }
 
 .med-frequency {
   margin: 0;
-  color: #666;
+  color: #a5d6a7;
   font-size: 14px;
 }
 
 .frequency-badge {
   display: inline-block;
-  background: #f0f0f0;
+  background: #2e7d32;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
-  color: #667eea;
+  color: #e8f5e9;
 }
 
 .med-dosage {
   margin: 5px 0 0 0;
-  color: #666;
+  color: #a5d6a7;
   font-size: 13px;
 }
 
@@ -343,10 +344,11 @@
 
 /* Schedule Card */
 .schedule-card {
-  background: white;
+  background: #1a3a2e;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #2d5f3e;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease;
 }
 
@@ -360,13 +362,13 @@
   align-items: center;
   margin-bottom: 15px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #2d5f3e;
 }
 
 .schedule-header h4 {
   margin: 0;
   font-size: 18px;
-  color: #333;
+  color: #e8f5e9;
 }
 
 .status-indicator {
@@ -388,7 +390,7 @@
 
 .schedule-details {
   margin-bottom: 15px;
-  color: #666;
+  color: #a5d6a7;
 }
 
 .schedule-details p {
@@ -397,7 +399,7 @@
 }
 
 .schedule-details strong {
-  color: #333;
+  color: #e8f5e9;
 }
 
 .schedule-logs {
@@ -406,7 +408,7 @@
 
 .schedule-logs strong {
   font-size: 13px;
-  color: #333;
+  color: #e8f5e9;
   display: block;
   margin-bottom: 8px;
 }
@@ -441,11 +443,12 @@
 .history-item {
   display: flex;
   gap: 15px;
-  background: white;
+  background: #1a3a2e;
   padding: 15px 20px;
   border-radius: 12px;
   align-items: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #2d5f3e;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease;
 }
 
@@ -487,12 +490,12 @@
   margin: 0 0 5px 0;
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: #e8f5e9;
 }
 
 .timestamp {
   margin: 0;
-  color: #999;
+  color: #81c784;
   font-size: 13px;
 }
 
@@ -529,10 +532,10 @@
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  background: white;
+  background: #cfebd5;
   border-radius: 12px;
-  border: 2px dashed #ddd;
-  color: #999;
+  border: 2px dashed #2d5f3e;
+  color: #1a3a2e;
 }
 
 .empty-state p {

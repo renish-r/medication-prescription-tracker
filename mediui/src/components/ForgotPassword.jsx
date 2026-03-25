@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './ForgotPassword.css';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -92,78 +91,81 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="forgot-password-container">
-      <div className="forgot-password-card">
-        <h2>Reset Password</h2>
+    <div className="auth-card">
+      <h1>Reset Password</h1>
 
-        {step === 'email' ? (
-          <form onSubmit={handleEmailSubmit}>
-            <div className="form-group">
-              <label htmlFor="email">Email Address</label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="Enter your email address"
-              />
+      {step === 'email' ? (
+        <form onSubmit={handleEmailSubmit} className="form">
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="Enter your email address"
+          />
+
+          {message && (
+            <div className={isSuccess ? 'success' : 'error'}>
+              {message}
             </div>
+          )}
 
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? 'Sending...' : 'Send Reset Link'}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleResetSubmit}>
-            <p className="reset-info">Email: {email}</p>
-
-            <div className="form-group">
-              <label htmlFor="newPassword">New Password</label>
-              <input
-                type="password"
-                id="newPassword"
-                value={resetData.newPassword}
-                onChange={(e) =>
-                  setResetData({ ...resetData, newPassword: e.target.value })
-                }
-                required
-                placeholder="Enter your new password"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                value={resetData.confirmPassword}
-                onChange={(e) =>
-                  setResetData({ ...resetData, confirmPassword: e.target.value })
-                }
-                required
-                placeholder="Confirm your new password"
-              />
-            </div>
-
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? 'Resetting...' : 'Reset Password'}
-            </button>
-          </form>
-        )}
-
-        {message && (
-          <div className={`message ${isSuccess ? 'success' : 'error'}`}>
-            {message}
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Sending...' : 'Send Reset Link'}
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={handleResetSubmit} className="form">
+          <div style={{ 
+            background: 'rgba(46, 125, 50, 0.2)', 
+            padding: '10px', 
+            borderRadius: '10px',
+            marginBottom: '12px',
+            fontSize: '14px',
+            color: '#a5d6a7',
+            border: '1px solid #2d5f3e'
+          }}>
+            Email: {email}
           </div>
-        )}
 
-        <div className="footer-links">
-          <Link to="/login">Back to Login</Link>
-          <span>|</span>
-          <Link to="/signup">Create Account</Link>
-        </div>
-      </div>
+          <input
+            type="password"
+            id="newPassword"
+            value={resetData.newPassword}
+            onChange={(e) =>
+              setResetData({ ...resetData, newPassword: e.target.value })
+            }
+            required
+            placeholder="Enter your new password"
+          />
+
+          <input
+            type="password"
+            id="confirmPassword"
+            value={resetData.confirmPassword}
+            onChange={(e) =>
+              setResetData({ ...resetData, confirmPassword: e.target.value })
+            }
+            required
+            placeholder="Confirm your new password"
+          />
+
+          {message && (
+            <div className={isSuccess ? 'success' : 'error'}>
+              {message}
+            </div>
+          )}
+
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Resetting...' : 'Reset Password'}
+          </button>
+        </form>
+      )}
+
+      <p className="muted">
+        <Link to="/login">Back to Login</Link> • <Link to="/signup">Create Account</Link>
+      </p>
     </div>
   );
 }

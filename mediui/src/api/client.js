@@ -19,7 +19,8 @@ export async function apiFetch(path, { method = 'GET', body, token, headers = {}
     init.body = JSON.stringify(body);
   }
 
-  const res = await fetch(`${API_BASE}${path}`, init);
+  const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
+  const res = await fetch(url, init);
   const text = await res.text();
   const data = text ? JSON.parse(text) : {};
 
@@ -30,3 +31,48 @@ export async function apiFetch(path, { method = 'GET', body, token, headers = {}
 
   return data;
 }
+
+// Lightweight client with familiar get/post helpers
+const getToken = () => {
+  // Try auth context storage first
+  const stored = localStorage.getItem('medimanager_auth');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (parsed?.token) return parsed.token;
+    } catch (e) {
+      // ignore parse errors and fall through
+    }
+  }
+  // Fallback to legacy key if present
+  return localStorage.getItem('token');
+};
+
+const buildUrl = (path, params) => {
+  if (!params) return `${API_BASE}${path}`;
+  const url = new URL(`${API_BASE}${path}`);
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      url.searchParams.set(key, value);
+    }
+  });
+  return url.toString();
+};
+
+async function request(method, path, { params, data, headers } = {}) {
+  const token = getToken();
+  const url = buildUrl(path, params);
+  return apiFetch(url, {
+    method,
+    body: data,
+    token,
+    headers,
+  });
+}
+
+export const apiClient = {
+  get: (path, options = {}) => request('GET', path, options),
+  post: (path, data, options = {}) => request('POST', path, { ...options, data }),
+  put: (path, data, options = {}) => request('PUT', path, { ...options, data }),
+  delete: (path, options = {}) => request('DELETE', path, options),
+};

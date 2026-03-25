@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
@@ -54,11 +55,16 @@ export default function LoginPage() {
             className="toggle-password"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? '🙈' : '👁️'}
+            {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
           </button>
         </div>
+        <div style={{ textAlign: 'right', marginTop: '-8px', marginBottom: '8px' }}>
+          <Link to="/forgot-password" className="link-btn" style={{ fontSize: '14px' }}>
+            Forgot Password?
+          </Link>
+        </div>
         {error && <div className="error">{error}</div>}
-        <button type="submit" disabled={loading}>{loading ? 'Signing in…' : 'Login'}</button>
+        <button type="submit" style={{ marginTop: '0px' }} disabled={loading}>{loading ? 'Signing in…' : 'Login'}</button>
       </form>
       <p className="muted">No account? <Link to="/signup">Create one</Link></p>
     </div>

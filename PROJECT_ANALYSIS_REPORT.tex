@@ -1,0 +1,628 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  pdftitle={Medication Prescription Tracker Analysis Report}
+}
+
+\title{Medication Prescription Tracker\\Analysis Report}
+\author{Generated from repository inspection}
+\date{March 17, 2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Project Overview}
+The Medication Prescription Tracker is a role-based full-stack healthcare application designed to manage prescription creation, medication schedules, patient adherence, pharmacy inventory, dispensing operations, and administrative oversight.
+
+The implementation is split into two main subsystems:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Frontend:} React + Vite application in \texttt{mediui/}
+  \item \textbf{Backend:} Spring Boot application in \texttt{medimanager/}
+\end{itemize}
+
+The system supports four principal roles:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Patient} - views prescriptions, tracks doses, reviews adherence analytics
+  \item \textbf{Doctor} - creates patients, issues and manages prescriptions
+  \item \textbf{Pharmacist} - manages stock and dispenses medication
+  \item \textbf{Admin} - monitors users, prescriptions, and audit activity
+\end{itemize}
+
+\section{Objectives of the System}
+From the implementation, the major system goals appear to be:
+\begin{enumerate}[leftmargin=*]
+  \item digitize prescription creation and renewal,
+  \item connect prescriptions with medication schedules,
+  \item measure patient adherence through dose logging,
+  \item support pharmacist inventory and dispensing workflows,
+  \item enforce role-based access control,
+  \item provide administrative visibility over users and system activity.
+\end{enumerate}
+
+\section{Technology Stack}
+\subsection{Frontend}
+\begin{itemize}[leftmargin=*]
+  \item React 18
+  \item React Router DOM
+  \item Vite
+  \item Recharts for analytics visualizations
+  \item Lucide React for icons
+\end{itemize}
+
+\subsection{Backend}
+\begin{itemize}[leftmargin=*]
+  \item Spring Boot
+  \item Spring Web
+  \item Spring Data JPA
+  \item Spring Security
+  \item JWT via \texttt{jjwt}
+  \item Flyway for schema migration
+  \item H2 and PostgreSQL support
+  \item iText 7 for prescription PDF generation
+\end{itemize}
+
+\subsection{Programming Environment}
+\begin{itemize}[leftmargin=*]
+  \item Java 21
+  \item JavaScript / JSX
+  \item Maven for backend build
+  \item npm for frontend build
+\end{itemize}
+
+\section{High-Level Architecture}
+The system follows a conventional client-server design.
+
+\subsection{Frontend Layer}
+The React application handles:
+\begin{itemize}[leftmargin=*]
+  \item authentication state persistence,
+  \item route protection based on user role,
+  \item role-specific dashboards,
+  \item forms for prescription, patient, inventory, and profile management,
+  \item analytics visualization for patient adherence.
+\end{itemize}
+
+\subsection{Backend Layer}
+The Spring Boot application is organized into:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Controllers} for REST endpoints,
+  \item \textbf{Services} for business logic,
+  \item \textbf{Repositories} for data access,
+  \item \textbf{Entities} for relational persistence,
+  \item \textbf{Security components} for JWT authentication and role enforcement.
+\end{itemize}
+
+\subsection{Persistence Layer}
+JPA entities model users, prescriptions, prescription medicines, schedules, dose logs, inventory records, dispense records, profiles, and audit logs.
+
+\section{Functional Modules}
+\subsection{Authentication and Profile Management}
+Implemented capabilities include:
+\begin{itemize}[leftmargin=*]
+  \item signup,
+  \item login,
+  \item password change,
+  \item forgot password request,
+  \item password reset,
+  \item profile editing.
+\end{itemize}
+
+Authentication data is stored in the frontend local storage under \texttt{medimanager\_auth}. Backend security uses stateless JWT-based authorization.
+
+\subsection{Prescription Management}
+Doctors can:
+\begin{itemize}[leftmargin=*]
+  \item create prescriptions,
+  \item renew existing prescriptions,
+  \item update existing prescriptions,
+  \item delete prescriptions,
+  \item download prescriptions as PDF,
+  \item view their own prescription list,
+  \item fetch prescriptions for specific patients.
+\end{itemize}
+
+The backend automatically converts prescription medicine entries into medication schedules for the patient.
+
+\subsection{Patient Management}
+Doctors can onboard patients directly by creating:
+\begin{itemize}[leftmargin=*]
+  \item a user account with role \texttt{PATIENT},
+  \item an associated patient profile containing demographic fields.
+\end{itemize}
+
+\subsection{Medication Scheduling and Adherence}
+Patients can:
+\begin{itemize}[leftmargin=*]
+  \item view their prescriptions,
+  \item create medication schedules,
+  \item retrieve adherence percentage,
+  \item access dose logs for a date range,
+  \item use a medication tracker UI.
+\end{itemize}
+
+Adherence is computed from taken vs missed dose logs.
+
+\subsection{Pharmacy Inventory and Dispensing}
+Pharmacists can:
+\begin{itemize}[leftmargin=*]
+  \item add inventory items,
+  \item update stock quantity,
+  \item delete inventory items,
+  \item retrieve low-stock alerts,
+  \item retrieve expiring-stock alerts,
+  \item view active prescriptions,
+  \item dispense medication against inventory.
+\end{itemize}
+
+\subsection{Administrative Oversight}
+Admins can:
+\begin{itemize}[leftmargin=*]
+  \item view system summary statistics,
+  \item list all users,
+  \item filter users by role,
+  \item create users,
+  \item toggle user active status,
+  \item delete users,
+  \item view prescriptions,
+  \item inspect audit logs.
+\end{itemize}
+
+\section{Comprehensive Feature Inventory}
+This section lists the implemented features in a more exhaustive form so the document can be used for complete project analysis.
+
+\subsection{Authentication Features}
+\begin{itemize}[leftmargin=*]
+  \item user signup with role-aware onboarding flow,
+  \item user login with JWT token generation,
+  \item persistent authenticated session in frontend local storage,
+  \item protected frontend routes,
+  \item backend route authorization by role,
+  \item change password for authenticated users,
+  \item forgot password request handling,
+  \item reset password endpoint,
+  \item logout support,
+  \item role display in navigation and workspace routing.
+\end{itemize}
+
+\subsection{Profile and Account Features}
+\begin{itemize}[leftmargin=*]
+  \item profile editing for authenticated users,
+  \item user activation and deactivation,
+  \item admin-side user creation,
+  \item admin-side user deletion,
+  \item user filtering by role,
+  \item account creation origin tracking through \texttt{createdBy}.
+\end{itemize}
+
+\subsection{Doctor Features}
+\begin{itemize}[leftmargin=*]
+  \item patient onboarding by doctor,
+  \item patient search and listing,
+  \item prescription creation for selected patient,
+  \item multi-medicine prescription entry,
+  \item diagnosis capture,
+  \item expiry date control,
+  \item prescription renewal,
+  \item prescription update,
+  \item prescription deletion,
+  \item viewing doctor-owned prescriptions,
+  \item viewing prescriptions for a specific patient,
+  \item monitoring patient adherence,
+  \item viewing patient schedules,
+  \item viewing patient dose logs,
+  \item generating downloadable prescription PDF files.
+\end{itemize}
+
+\subsection{Prescription Features}
+\begin{itemize}[leftmargin=*]
+  \item prescription issue date recording,
+  \item prescription expiry date recording,
+  \item prescription status management,
+  \item support for active, expired, renewed, and cancelled lifecycle states,
+  \item medicine-level prescription breakdown,
+  \item dosage capture,
+  \item timing or frequency capture,
+  \item duration capture,
+  \item instruction or notes capture,
+  \item prescription response DTO mapping for frontend use,
+  \item PDF export for prescription documentation.
+\end{itemize}
+
+\subsection{Medication Scheduling Features}
+\begin{itemize}[leftmargin=*]
+  \item automatic medication schedule generation from prescription medicines,
+  \item manual medication schedule creation,
+  \item schedule start and end date tracking,
+  \item medicine time-of-day tracking,
+  \item schedule activation state,
+  \item daily, weekly, and monthly-style frequency handling,
+  \item parsing of medicine timing into schedule time,
+  \item schedule retrieval by patient,
+  \item expired schedule deactivation logic,
+  \item schedule deletion through deactivation.
+\end{itemize}
+
+\subsection{Patient Features}
+\begin{itemize}[leftmargin=*]
+  \item personal prescription dashboard,
+  \item prescription detail modal view,
+  \item prescription PDF download,
+  \item medication tracker access,
+  \item personal adherence retrieval,
+  \item dose log retrieval over date ranges,
+  \item visual adherence dashboard,
+  \item daily taken versus missed medication chart,
+  \item adherence trend chart,
+  \item active prescription count display,
+  \item insight and recommendation panel.
+\end{itemize}
+
+\subsection{Dose Logging and Adherence Features}
+\begin{itemize}[leftmargin=*]
+  \item taken and missed dose states,
+  \item timestamped dose logging,
+  \item optional notes with dose logs,
+  \item dose retrieval by schedule,
+  \item dose retrieval by patient,
+  \item adherence percentage calculation,
+  \item analytics refresh support in frontend after dose logging,
+  \item date-range-based analytics requests from frontend.
+\end{itemize}
+
+\subsection{Pharmacist Features}
+\begin{itemize}[leftmargin=*]
+  \item pharmacist-specific inventory dashboard,
+  \item adding new drug inventory items,
+  \item batch number tracking,
+  \item expiry date tracking,
+  \item stock quantity tracking,
+  \item low-stock threshold tracking,
+  \item manufacturer capture,
+  \item unit price capture,
+  \item update stock operation,
+  \item inventory deletion,
+  \item low-stock alert retrieval,
+  \item expiring-soon stock retrieval,
+  \item dashboard summary statistics,
+  \item active prescription viewing for dispense decisions,
+  \item patient-specific active prescription retrieval,
+  \item medication dispensing with quantity validation,
+  \item optional prescription linkage during dispensing,
+  \item dispense record creation,
+  \item total stock value calculation.
+\end{itemize}
+
+\subsection{Admin Features}
+\begin{itemize}[leftmargin=*]
+  \item system summary dashboard,
+  \item user counts,
+  \item doctor counts,
+  \item patient counts,
+  \item prescription counts,
+  \item recent prescription display,
+  \item full user listing,
+  \item role-filtered user listing,
+  \item admin-side account creation,
+  \item toggle user active status,
+  \item delete user,
+  \item prescription oversight,
+  \item audit log retrieval by user,
+  \item audit log retrieval by entity,
+  \item audit log retrieval by date window.
+\end{itemize}
+
+\subsection{Audit and Monitoring Features}
+\begin{itemize}[leftmargin=*]
+  \item audit logging for prescription creation,
+  \item audit logging for prescription renewal,
+  \item audit logging for prescription update,
+  \item audit logging for prescription deletion,
+  \item audit logging for schedule creation,
+  \item audit logging for dose logging,
+  \item audit visibility for administrators.
+\end{itemize}
+
+\subsection{Frontend Experience Features}
+\begin{itemize}[leftmargin=*]
+  \item role-based top navigation,
+  \item workspace tiles on dashboard,
+  \item protected route component,
+  \item login page,
+  \item signup page,
+  \item forgot password page,
+  \item profile editor component,
+  \item password change component,
+  \item doctor prescription management page,
+  \item patient prescription page,
+  \item patient analytics page,
+  \item pharmacist inventory page,
+  \item admin dashboard page,
+  \item admin user management page.
+\end{itemize}
+
+\subsection{Backend Infrastructure Features}
+\begin{itemize}[leftmargin=*]
+  \item stateless security filter chain,
+  \item JWT request filter,
+  \item custom user details service,
+  \item BCrypt password encoding,
+  \item Flyway migration support,
+  \item H2 development database support,
+  \item PostgreSQL runtime support,
+  \item REST API layering through controller-service-repository structure,
+  \item PDF generation through iText,
+  \item environment-based database configuration support.
+\end{itemize}
+
+\section{Role-Based Workflow Analysis}
+\subsection{Doctor Workflow}
+\begin{enumerate}[leftmargin=*]
+  \item Create or select a patient.
+  \item Enter diagnosis and prescription expiry date.
+  \item Add one or more medicines with dosage, frequency, duration, and notes.
+  \item Submit prescription to backend.
+  \item Backend saves prescription and medicines.
+  \item Backend auto-generates medication schedules.
+  \item Doctor can later renew, edit, delete, or export PDF.
+\end{enumerate}
+
+\subsection{Patient Workflow}
+\begin{enumerate}[leftmargin=*]
+  \item Log in and open patient dashboard.
+  \item Review prescription list and details.
+  \item Open medication tracker and log medicine-taking behavior.
+  \item View analytics dashboard for adherence trends.
+  \item Download prescription PDF when needed.
+\end{enumerate}
+
+\subsection{Pharmacist Workflow}
+\begin{enumerate}[leftmargin=*]
+  \item Add stock items with batch, expiry, threshold, unit price, and manufacturer.
+  \item Monitor low-stock and expiry alerts.
+  \item Review active prescriptions.
+  \item Select inventory item and dispense quantity to patient.
+  \item Backend reduces stock and stores dispense record.
+\end{enumerate}
+
+\subsection{Admin Workflow}
+\begin{enumerate}[leftmargin=*]
+  \item Open dashboard summary.
+  \item Inspect total users, patients, doctors, and prescriptions.
+  \item Manage users by creation, activation toggle, or deletion.
+  \item Review audit logs and prescription history.
+\end{enumerate}
+
+\subsection{Cross-Module Workflow}
+\begin{enumerate}[leftmargin=*]
+  \item A doctor creates a patient account and patient profile.
+  \item The doctor creates a prescription with one or more medicines.
+  \item The system stores the prescription and its medicine items.
+  \item The backend auto-generates medication schedules from prescribed medicines.
+  \item The patient views prescriptions and follows the medication tracker.
+  \item Dose logs are stored as taken or missed events.
+  \item Adherence analytics are calculated from patient dose history.
+  \item The pharmacist reviews active prescriptions and manages stock.
+  \item The pharmacist dispenses medication and inventory is updated.
+  \item The admin monitors the platform through user and audit oversight.
+\end{enumerate}
+
+\section{Data Model Summary}
+\subsection{Core Entities}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.70\textwidth}}
+\toprule
+\textbf{Entity} & \textbf{Purpose and Main Fields} \\
+\midrule
+\endhead
+User & Stores credentials and role assignment. Key fields: id, email, password, role, active, createdAt, updatedAt, createdBy. \\
+Prescription & Connects patient and doctor with diagnosis, issued date, expiry date, status, and medicine list. \\
+PrescriptionMedicine & Stores medicine lines within a prescription including medicine name, dosage, frequency, duration, and instructions. \\
+MedicationSchedule & Stores reminder-oriented schedule data for a patient including medicine name, time of day, frequency, date range, and active flag. \\
+DoseLog & Stores whether a dose was taken or missed, plus timestamp and notes. \\
+DrugInventory & Stores pharmacist-owned stock records including drug name, batch number, expiry date, stock quantity, threshold, unit price, and manufacturer. \\
+MedicationDispense & Stores dispensing events linked to inventory, pharmacist, optional prescription, patient name, quantity, and dispensed time. \\
+PatientProfile & Stores patient demographic details such as name, age, and gender. \\
+DoctorProfile & Stores doctor metadata such as name, specialization, and license number. \\
+PharmacistProfile & Stores pharmacist profile information. \\
+AuditLog & Stores tracked system actions for accountability. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Entity Relationships}
+\begin{itemize}[leftmargin=*]
+  \item One patient can have many prescriptions.
+  \item One doctor can issue many prescriptions.
+  \item One prescription can contain many prescription medicines.
+  \item One patient can have many medication schedules.
+  \item One medication schedule can have many dose logs.
+  \item One pharmacist can own many inventory records.
+  \item One inventory record can have many dispense events.
+  \item One admin or service action can create many audit log entries over time.
+\end{itemize}
+
+\section{API Surface Summary}
+\subsection{Authentication}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{POST /api/auth/signup}
+  \item \texttt{POST /api/auth/login}
+  \item \texttt{PUT /api/auth/change-password}
+  \item \texttt{POST /api/auth/forgot-password}
+  \item \texttt{POST /api/auth/reset-password}
+\end{itemize}
+
+\subsection{Patient}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{GET /api/patient/prescriptions}
+  \item \texttt{GET /api/patient/prescriptions/\{id\}}
+  \item \texttt{POST /api/patient/schedules/create}
+  \item \texttt{GET /api/patient/adherence}
+  \item \texttt{GET /api/patient/dose-logs}
+\end{itemize}
+
+\subsection{Doctor}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{POST /api/doctor/prescriptions/create}
+  \item \texttt{GET /api/doctor/prescriptions}
+  \item \texttt{POST /api/doctor/prescriptions/\{id\}/renew}
+  \item \texttt{PUT /api/doctor/prescriptions/\{id\}}
+  \item \texttt{DELETE /api/doctor/prescriptions/\{id\}}
+  \item \texttt{POST /api/doctor/patients}
+  \item \texttt{GET /api/doctor/patients}
+  \item \texttt{GET /api/doctor/patients/\{patientId\}/prescriptions}
+  \item \texttt{GET /api/doctor/patients/\{patientId\}/adherence}
+  \item \texttt{GET /api/doctor/patients/\{patientId\}/schedules}
+  \item \texttt{GET /api/doctor/patients/\{patientId\}/dose-logs}
+\end{itemize}
+
+\subsection{Pharmacist}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{POST /api/pharmacist/inventory/add}
+  \item \texttt{GET /api/pharmacist/inventory}
+  \item \texttt{PUT /api/pharmacist/inventory/\{drugId\}/update-stock}
+  \item \texttt{DELETE /api/pharmacist/inventory/\{drugId\}}
+  \item \texttt{GET /api/pharmacist/inventory/low-stock}
+  \item \texttt{GET /api/pharmacist/inventory/expiring}
+  \item \texttt{GET /api/pharmacist/prescriptions}
+  \item \texttt{GET /api/pharmacist/prescriptions/patient/\{patientId\}}
+  \item \texttt{GET /api/pharmacist/dashboard/stats}
+  \item \texttt{POST /api/pharmacist/inventory/dispense}
+\end{itemize}
+
+\subsection{Admin}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{GET /api/admin/summary}
+  \item \texttt{GET /api/admin/prescriptions}
+  \item \texttt{GET /api/admin/dashboard/stats}
+  \item \texttt{GET /api/admin/users}
+  \item \texttt{GET /api/admin/users/role/\{role\}}
+  \item \texttt{POST /api/admin/users}
+  \item \texttt{PUT /api/admin/users/\{userId\}/toggle-status}
+  \item \texttt{DELETE /api/admin/users/\{userId\}}
+  \item \texttt{GET /api/admin/audit-logs}
+  \item \texttt{GET /api/admin/audit-logs/entity/\{entityType\}/\{entityId\}}
+\end{itemize}
+
+\subsection{General Prescription Endpoints}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{POST /api/prescriptions/create}
+  \item \texttt{GET /api/prescriptions}
+  \item \texttt{GET /api/prescriptions/\{patientId\}}
+  \item \texttt{GET /api/prescriptions/detail/\{id\}}
+  \item \texttt{GET /api/prescriptions/\{id\}/download-pdf}
+\end{itemize}
+
+\section{Security Analysis}
+\subsection{Strengths}
+\begin{itemize}[leftmargin=*]
+  \item Stateless JWT-based authentication is present.
+  \item Password hashing uses BCrypt.
+  \item Route-level and method-level role restrictions are applied.
+  \item Role segregation is explicit for admin, doctor, patient, and pharmacist APIs.
+\end{itemize}
+
+\subsection{Observed Limitations}
+\begin{itemize}[leftmargin=*]
+  \item Some controllers expose broad \texttt{@CrossOrigin(origins = "*")} configuration.
+  \item Password reset flow is placeholder-style and does not show tokenized email verification.
+  \item Several endpoints return generic bad-request responses without structured error taxonomy.
+  \item Public prescription endpoints coexist with role-restricted prescription endpoints, which may require further review for least-privilege design.
+\end{itemize}
+
+\section{Implementation Quality Analysis}
+\subsection{Positive Design Choices}
+\begin{itemize}[leftmargin=*]
+  \item Clear separation between controllers, services, repositories, and entities.
+  \item Role-specific frontend routing aligns with backend authorization structure.
+  \item Automatic schedule creation from prescriptions improves workflow continuity.
+  \item PDF export adds practical value for real-world prescription usage.
+  \item Adherence analytics connect operational data with patient outcome tracking.
+\end{itemize}
+
+\subsection{Technical Observations}
+\begin{itemize}[leftmargin=*]
+  \item The system contains both global prescription endpoints and doctor-specific prescription endpoints, which suggests iterative expansion rather than strict consolidation.
+  \item Some older UI artifacts and encoded characters indicate mixed documentation or encoding history.
+  \item Adherence calculation uses aggregate taken/missed counts and does not appear to apply the provided date range at repository-count level.
+  \item Update schedule logic exists but currently does not apply detailed field mutations in the shown service implementation.
+  \item Frontend API access relies on local storage token retrieval, which is functional but should be evaluated for long-term security posture.
+\end{itemize}
+
+\subsection{Implemented Feature Depth}
+The codebase goes beyond a basic prescription CRUD application. It includes:
+\begin{itemize}[leftmargin=*]
+  \item account lifecycle support,
+  \item role-governed workspaces,
+  \item prescription-to-schedule automation,
+  \item patient adherence analytics,
+  \item inventory risk monitoring,
+  \item dispensing records,
+  \item administrative supervision,
+  \item auditability,
+  \item downloadable documentation in PDF form.
+\end{itemize}
+
+\section{Analytical Strengths of the Project}
+This project is suitable for academic or technical analysis because it includes:
+\begin{itemize}[leftmargin=*]
+  \item multi-role user management,
+  \item end-to-end healthcare workflow coverage,
+  \item traceable entity relationships,
+  \item measurable adherence outcomes,
+  \item stock and dispensing operations,
+  \item auditability and administrative supervision.
+\end{itemize}
+
+These characteristics make it useful for analysis in software engineering, health informatics, information systems design, and applied database modeling.
+
+\section{Potential Research or Evaluation Angles}
+The project can be analyzed under several themes:
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Software architecture:} modularity, maintainability, separation of concerns.
+  \item \textbf{Security:} JWT handling, role enforcement, password lifecycle, CORS policy.
+  \item \textbf{Database design:} normalization, relationship mapping, transaction boundaries.
+  \item \textbf{Healthcare workflow digitization:} prescription-to-schedule automation.
+  \item \textbf{Analytics quality:} adherence metric design and visualization usefulness.
+  \item \textbf{Usability:} role-based dashboards and workflow fit for end users.
+  \item \textbf{Scalability:} readiness for production deployment and concurrent usage.
+\end{enumerate}
+
+\section{Limitations and Improvement Opportunities}
+\begin{itemize}[leftmargin=*]
+  \item Add stronger password reset with token issuance and email delivery.
+  \item Refine CORS configuration for production environments.
+  \item Consolidate duplicate or overlapping endpoint patterns.
+  \item Improve validation and consistent error responses across APIs.
+  \item Expand test coverage beyond the minimal visible automated test footprint.
+  \item Improve adherence calculations to fully respect selected date windows.
+  \item Add stronger domain rules for prescription expiration, cancellation, and dispense verification.
+\end{itemize}
+
+\section{Conclusion}
+The Medication Prescription Tracker is a substantial full-stack healthcare management application with meaningful support for prescriptions, schedules, adherence, inventory, dispensing, and administration. Its architecture is practical and understandable, making it a strong candidate for system analysis. The codebase demonstrates clear functional breadth and reasonable modular organization, while still leaving identifiable opportunities for refinement in validation, security hardening, and analytical accuracy.
+
+\section{Suggested Appendix Items for Further Study}
+If a longer academic report is needed, the following appendix materials can be added later:
+\begin{itemize}[leftmargin=*]
+  \item UML use case diagram,
+  \item entity relationship diagram,
+  \item sequence diagram for prescription creation,
+  \item sequence diagram for medicine dispensing,
+  \item test-case matrix,
+  \item security threat model,
+  \item deployment architecture diagram.
+\end{itemize}
+
+\end{document}
